@@ -1,0 +1,59 @@
+.concept-tree {
+  padding: 8px 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.concept-category {
+  margin-bottom: 4px;
+}
+
+.category-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 8px 16px 4px;
+}
+
+.concept-tree-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+  border-left: 3px solid transparent;
+}
+
+.concept-tree-node:hover {
+  background: var(--bg-tertiary);
+}
+
+.concept-tree-node.active {
+  background: var(--bg-tertiary);
+  border-left-color: var(--accent-blue);
+}
+
+.node-status {
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.node-name {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.node-difficulty {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  padding: 1px 4px;
+  border-radius: 3px;
+}

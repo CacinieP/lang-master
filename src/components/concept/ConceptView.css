@@ -1,0 +1,76 @@
+.concept-view {
+  max-width: 1200px;
+}
+
+.concept-header {
+  margin-bottom: 20px;
+}
+
+.concept-badges {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-layer {
+  background: rgba(122, 162, 247, 0.15);
+  color: var(--accent-blue);
+}
+
+.badge-difficulty {
+  background: rgba(187, 154, 247, 0.15);
+  color: var(--accent-purple);
+}
+
+.concept-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.concept-description {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.concept-panels {
+  margin-top: 24px;
+}
+
+.panel-toggle-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.panel-toggle {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.panel-toggle:hover {
+  background: var(--bg-tertiary);
+}
+
+.panel-toggle.active {
+  background: var(--accent-blue);
+  color: #fff;
+  border-color: var(--accent-blue);
+}

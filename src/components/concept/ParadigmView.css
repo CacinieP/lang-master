@@ -1,0 +1,39 @@
+.paradigm-view {
+  margin-top: 16px;
+}
+
+.paradigm-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.paradigm-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paradigm-column-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.paradigm-icon {
+  font-size: 1.1rem;
+}
+
+.paradigm-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+@media (max-width: 900px) {
+  .paradigm-columns {
+    grid-template-columns: 1fr;
+  }
+}

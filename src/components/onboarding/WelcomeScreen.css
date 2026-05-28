@@ -1,0 +1,220 @@
+.welcome-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px;
+}
+
+.welcome-content {
+  max-width: 640px;
+  text-align: center;
+}
+
+.welcome-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--accent-blue);
+  margin-bottom: 8px;
+  letter-spacing: -0.03em;
+}
+
+.welcome-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.five-layers-intro,
+.paradigm-intro {
+  margin-bottom: 32px;
+}
+
+.layers-title,
+.paradigm-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.layers-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.layer-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.layer-step-number {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-blue);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(122, 162, 247, 0.15);
+  border-radius: 50%;
+}
+
+.layer-step-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.layer-step-english {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.layer-arrow {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.layers-explanation {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.paradigm-cards {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.paradigm-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.paradigm-card-icon {
+  font-size: 1.2rem;
+}
+
+.paradigm-card-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-top: 32px;
+}
+
+.btn-lg {
+  padding: 12px 32px;
+  font-size: 1rem;
+}
+
+.btn-secondary {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-secondary);
+}
+
+/* LanguageSurvey */
+.language-survey {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px;
+  text-align: center;
+}
+
+.survey-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.survey-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+.survey-languages {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.survey-lang-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 100px;
+}
+
+.survey-lang-btn:hover {
+  border-color: var(--accent-blue);
+}
+
+.survey-lang-btn.selected {
+  border-color: var(--accent-blue);
+  background: rgba(122, 162, 247, 0.1);
+}
+
+.survey-lang-icon {
+  font-size: 2rem;
+}
+
+.survey-lang-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.survey-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
