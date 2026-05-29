@@ -23,7 +23,6 @@ export function ChallengeArena() {
   const lang = uiLanguage;
 
   const [selected, setSelected] = useState<string | null>(null);
-  const [autoAdvance, setAutoAdvance] = useState(false);
 
   const problem = problems[currentIndex];
   const lastAnswer = answers.length > 0 ? answers[answers.length - 1] : null;
@@ -39,16 +38,14 @@ export function ChallengeArena() {
 
   // Auto-advance after feedback
   useEffect(() => {
-    if (showingFeedback && !autoAdvance) {
-      setAutoAdvance(true);
+    if (showingFeedback) {
       const timer = setTimeout(() => {
         nextProblem();
         setSelected(null);
-        setAutoAdvance(false);
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [showingFeedback, autoAdvance, nextProblem]);
+  }, [showingFeedback, nextProblem]);
 
   const handleSelect = useCallback((option: string) => {
     if (showingFeedback || !problem) return;
@@ -126,11 +123,10 @@ export function ChallengeArena() {
           </div>
         )}
 
-        {showingFeedback && !autoAdvance && (
+        {showingFeedback && (
           <button className="btn-primary arena-next" onClick={() => {
             nextProblem();
             setSelected(null);
-            setAutoAdvance(false);
           }}>
             {t('challenge_next', lang)}
           </button>
