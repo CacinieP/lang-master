@@ -38,10 +38,12 @@ export interface LanguageExpression {
 // Negative transfer trap (C3)
 export interface Trap {
   description: string;
+  description_en?: string;
   severity: 'low' | 'medium' | 'high';
   example_wrong: string;
   example_correct: string;
   explanation: string;
+  explanation_en?: string;
 }
 
 // Positive transfer

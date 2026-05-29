@@ -9,6 +9,7 @@ import { CONCEPT_NODES } from '@/data/concepts';
 import { LAYER_ORDER } from '@/data/constants';
 import type { Layer } from '@/types';
 
+import { t } from '@/utils/i18n';
 import { useChallengeStore } from '@/store/challengeStore';
 
 import { Header } from '@/components/layout/Header';
@@ -19,9 +20,9 @@ import { WelcomeScreen } from '@/components/onboarding/WelcomeScreen';
 import { ChallengeLobby } from '@/components/challenge/ChallengeLobby';
 import { ChallengeArena } from '@/components/challenge/ChallengeArena';
 import { ChallengeResult } from '@/components/challenge/ChallengeResult';
+import { ToastContainer } from '@/components/common/Toast';
 
 import '@/components/layout/Header.css';
-import '@/components/layout/AppLayout.css';
 import '@/components/concept/CodeBlock.css';
 
 function App() {
@@ -38,6 +39,9 @@ function App() {
     () => activeConceptId ? getConceptById(activeConceptId) : undefined,
     [activeConceptId],
   );
+
+  const uiLanguage = useUserStore((s) => s.profile.ui_language);
+  const lang = uiLanguage;
 
   const challengeStatus = useChallengeStore((s) => s.status);
 
@@ -84,6 +88,7 @@ function App() {
             {challengeStatus === 'finished' && <ChallengeResult />}
           </main>
         </div>
+        <ToastContainer />
       </div>
     );
   }
@@ -102,11 +107,12 @@ function App() {
           ) : (
             <div className="empty-content">
               <h2>Lang Master</h2>
-              <p>从左侧选择一个概念开始探索</p>
+              <p>{t('empty_select_concept', lang)}</p>
             </div>
           )}
         </main>
       </div>
+      <ToastContainer />
     </div>
   );
 }

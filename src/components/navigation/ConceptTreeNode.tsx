@@ -30,18 +30,20 @@ export function ConceptTreeNode({ conceptId, status, isActive, onSelect, uiLangu
   const name = uiLanguage === 'zh' ? concept.name : concept.name_en;
 
   return (
-    <div
+    <button
       className={`concept-tree-node ${isActive ? 'active' : ''}`}
       onClick={onSelect}
+      aria-pressed={isActive}
     >
       <span
         className="node-status"
         style={{ color: STATUS_COLORS[status] }}
+        aria-hidden="true"
       >
         {STATUS_ICONS[status]}
       </span>
       <span className="node-name">{name}</span>
       <span className="node-difficulty">P{concept.difficulty}</span>
-    </div>
+    </button>
   );
 }

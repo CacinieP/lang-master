@@ -138,6 +138,11 @@ body {
   background: var(--bg-tertiary);
 }
 
+.btn-icon:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
 /* Empty content */
 .empty-content {
   display: flex;
@@ -176,6 +181,11 @@ body {
   opacity: 0.9;
 }
 
+.btn-primary:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
 .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -195,6 +205,11 @@ body {
 .btn-secondary:hover {
   border-color: var(--text-secondary);
   color: var(--text-secondary);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
 }
 
 .btn-lg {
@@ -219,9 +234,38 @@ body {
   color: #fff;
 }
 
+.btn-challenge:focus-visible {
+  outline: 2px solid var(--accent-orange);
+  outline-offset: 2px;
+}
+
 /* Challenge content layout */
 .challenge-content {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .app-sidebar.collapsed {
+    width: 0;
+    min-width: 0;
+    box-shadow: none;
+  }
+
+  .app-content {
+    padding: 16px;
+  }
 }

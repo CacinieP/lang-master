@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useUserStore } from '@/store/userStore';
 import { ALPHA_LANGUAGES } from '@/types';
 import { LANGUAGE_META } from '@/data/constants';
+import { t } from '@/utils/i18n';
 
 interface Props {
   onComplete: () => void;
@@ -11,6 +12,7 @@ export function LanguageSurvey({ onComplete }: Props) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const addKnownLanguage = useUserStore((s) => s.addKnownLanguage);
   const uiLanguage = useUserStore((s) => s.profile.ui_language);
+  const lang = uiLanguage;
 
   const toggleLang = (lang: string) => {
     const next = new Set(selected);
@@ -24,7 +26,7 @@ export function LanguageSurvey({ onComplete }: Props) {
 
   const handleContinue = () => {
     for (const lang of selected) {
-      addKnownLanguage(lang as typeof ALPHA_LANGUAGES[number], 'intermediate');
+      addKnownLanguage(lang as typeof ALPHA_LANGUAGES[number], 'beginner');
     }
     onComplete();
   };
@@ -32,12 +34,10 @@ export function LanguageSurvey({ onComplete }: Props) {
   return (
     <div className="language-survey">
       <h2 className="survey-title">
-        {uiLanguage === 'zh' ? '你熟悉哪些编程语言？' : 'Which programming languages do you know?'}
+        {t('survey_title', lang)}
       </h2>
       <p className="survey-subtitle">
-        {uiLanguage === 'zh'
-          ? '这将帮助 Lang Master 为你标注负迁移陷阱和正迁移加速路径'
-          : 'This helps Lang Master label negative transfer traps and positive transfer paths for you'}
+        {t('survey_subtitle', lang)}
       </p>
 
       <div className="survey-languages">
@@ -59,10 +59,10 @@ export function LanguageSurvey({ onComplete }: Props) {
 
       <div className="survey-actions">
         <button className="btn-primary btn-lg" onClick={handleContinue}>
-          {uiLanguage === 'zh' ? '继续' : 'Continue'}
+          {t('survey_continue', lang)}
         </button>
         <button className="btn-secondary" onClick={onComplete}>
-          {uiLanguage === 'zh' ? '跳过' : 'Skip'}
+          {t('survey_skip', lang)}
         </button>
       </div>
     </div>

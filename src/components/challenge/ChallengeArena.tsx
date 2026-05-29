@@ -3,6 +3,7 @@ import { useChallengeStore } from '@/store/challengeStore';
 import { useUserStore } from '@/store/userStore';
 import { ChallengeTimer } from './ChallengeTimer';
 import { StreakIndicator } from './StreakIndicator';
+import { t } from '@/utils/i18n';
 import './Challenge.css';
 
 export function ChallengeArena() {
@@ -19,7 +20,7 @@ export function ChallengeArena() {
   const nextProblem = useChallengeStore((s) => s.nextProblem);
   const tick = useChallengeStore((s) => s.tick);
   const uiLanguage = useUserStore((s) => s.profile.ui_language);
-  const zh = uiLanguage === 'zh';
+  const lang = uiLanguage;
 
   const [selected, setSelected] = useState<string | null>(null);
   const [autoAdvance, setAutoAdvance] = useState(false);
@@ -57,7 +58,7 @@ export function ChallengeArena() {
 
   if (!problem) return null;
 
-  const questionText = zh && problem.test.question_en ? problem.test.question_en : problem.test.question;
+  const questionText = lang === 'zh' ? problem.test.question : (problem.test.question_en || problem.test.question);
 
   return (
     <div className="challenge-arena">
@@ -66,7 +67,7 @@ export function ChallengeArena() {
           <ChallengeTimer timeRemaining={timeRemaining} timeLimit={config.timeLimit} />
         )}
         <div className="arena-stats">
-          <span className="arena-score">{zh ? '得分' : 'Score'}: {score}</span>
+          <span className="arena-score">{t('challenge_score', lang)}: {score}</span>
           <StreakIndicator streak={streak} />
           <span className="arena-progress">
             {currentIndex + 1}/{problems.length}
@@ -83,7 +84,7 @@ export function ChallengeArena() {
 
         <h3 className="arena-question-text">{questionText}</h3>
 
-        <div className="arena-options">
+        <div className="arena-options" role="radiogroup" aria-label="Answer options">
           {problem.test.options.map((option) => {
             let optClass = 'arena-option';
             if (showingFeedback && selected === option) {
@@ -98,6 +99,7 @@ export function ChallengeArena() {
                 className={optClass}
                 onClick={() => handleSelect(option)}
                 disabled={showingFeedback}
+                aria-pressed={selected === option}
               >
                 {option}
               </button>
@@ -106,16 +108,16 @@ export function ChallengeArena() {
         </div>
 
         {showingFeedback && (
-          <div className="arena-feedback">
+          <div className="arena-feedback" role="alert" aria-live="polite">
             {lastAnswer?.correct ? (
               <div className="feedback-correct">
                 <span className="feedback-icon">✓</span>
-                <span>{zh ? '正确! +' : 'Correct! +'}{lastAnswer.score}</span>
+                <span>{t('feedback_correct_prefix', lang)}{lastAnswer.score}</span>
               </div>
             ) : (
               <div className="feedback-wrong">
                 <span className="feedback-icon">✗</span>
-                <span>{zh ? '正确答案: ' : 'Answer: '}{problem.test.correct_answer}</span>
+                <span>{t('feedback_answer_prefix', lang)}{problem.test.correct_answer}</span>
               </div>
             )}
             {problem.test.trap_note && (
@@ -130,7 +132,7 @@ export function ChallengeArena() {
             setSelected(null);
             setAutoAdvance(false);
           }}>
-            {zh ? '下一题 →' : 'Next →'}
+            {t('challenge_next', lang)}
           </button>
         )}
       </div>

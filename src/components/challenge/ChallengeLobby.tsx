@@ -4,6 +4,7 @@ import { useUserStore } from '@/store/userStore';
 import { useUIStore } from '@/store/uiStore';
 import { countAvailableProblems } from '@/services/challengeEngine';
 import { LAYER_NAMES, LAYER_ORDER } from '@/data/constants';
+import { t } from '@/utils/i18n';
 import type { Layer } from '@/types';
 import './Challenge.css';
 
@@ -28,49 +29,55 @@ export function ChallengeLobby() {
 
   const handleStart = () => {
     startChallenge();
+    if (available === 0) {
+      useUIStore.getState().addToast(
+        t('no_problems', lang),
+        'warning',
+      );
+    }
   };
 
-  const zh = uiLanguage === 'zh';
+  const lang = uiLanguage;
 
   return (
     <div className="challenge-lobby">
       <div className="lobby-card">
-        <h2 className="lobby-title">{zh ? '挑战模式' : 'Challenge Mode'}</h2>
+        <h2 className="lobby-title">{t('challenge_mode_subtitle', lang)}</h2>
         <p className="lobby-subtitle">
-          {zh ? '限时答题，跨语言对比，连续答对获得连击加分' : 'Timed quiz, cross-language comparison, streak bonuses'}
+          {t('lobby_subtitle', lang)}
         </p>
 
         <div className="lobby-section">
-          <h3 className="lobby-section-title">{zh ? '模式' : 'Mode'}</h3>
+          <h3 className="lobby-section-title">{t('lobby_mode', lang)}</h3>
           <div className="mode-buttons">
             <button
               className={`mode-btn ${config.mode === 'timed' ? 'active' : ''}`}
               onClick={() => setConfig({ mode: 'timed' })}
             >
               <span className="mode-icon">⏱</span>
-              <span>{zh ? '限时模式' : 'Timed'}</span>
+              <span>{t('timed_mode', lang)}</span>
             </button>
             <button
               className={`mode-btn ${config.mode === 'count' ? 'active' : ''}`}
               onClick={() => setConfig({ mode: 'count' })}
             >
               <span className="mode-icon">🎯</span>
-              <span>{zh ? '限量模式' : 'Count'}</span>
+              <span>{t('count_mode', lang)}</span>
             </button>
           </div>
         </div>
 
         {config.mode === 'timed' && (
           <div className="lobby-section">
-            <h3 className="lobby-section-title">{zh ? '时间' : 'Time'}</h3>
+            <h3 className="lobby-section-title">{t('lobby_time', lang)}</h3>
             <div className="time-buttons">
-              {[60, 180, 300, 600].map((t) => (
+              {[60, 180, 300, 600].map((sec) => (
                 <button
-                  key={t}
-                  className={`time-btn ${config.timeLimit === t ? 'active' : ''}`}
-                  onClick={() => setConfig({ timeLimit: t })}
+                  key={sec}
+                  className={`time-btn ${config.timeLimit === sec ? 'active' : ''}`}
+                  onClick={() => setConfig({ timeLimit: sec })}
                 >
-                  {t >= 60 ? `${t / 60}${zh ? '分钟' : 'min'}` : `${t}s`}
+                  {sec >= 60 ? `${sec / 60}${t('minutes_unit', lang)}` : `${sec}s`}
                 </button>
               ))}
             </div>
@@ -79,7 +86,7 @@ export function ChallengeLobby() {
 
         {config.mode === 'count' && (
           <div className="lobby-section">
-            <h3 className="lobby-section-title">{zh ? '题数' : 'Questions'}</h3>
+            <h3 className="lobby-section-title">{t('lobby_questions', lang)}</h3>
             <div className="time-buttons">
               {[10, 20, 30, 50].map((n) => (
                 <button
@@ -95,7 +102,7 @@ export function ChallengeLobby() {
         )}
 
         <div className="lobby-section">
-          <h3 className="lobby-section-title">{zh ? '层级' : 'Layers'}</h3>
+          <h3 className="lobby-section-title">{t('lobby_layers', lang)}</h3>
           <div className="layer-buttons">
             {LAYER_ORDER.slice(0, 3).map((layer) => (
               <button
@@ -111,16 +118,16 @@ export function ChallengeLobby() {
         </div>
 
         <div className="lobby-info">
-          <span className="info-badge">{zh ? `${available} 题可用` : `${available} questions`}</span>
-          <span className="info-badge">{zh ? '4 语言' : '4 languages'}</span>
+          <span className="info-badge">{available} {lang === 'zh' ? '题可用' : 'questions'}</span>
+          <span className="info-badge">{t('four_languages', lang)}</span>
         </div>
 
         <div className="lobby-actions">
-          <button className="btn-primary btn-lg lobby-start" onClick={handleStart}>
-            {zh ? '开始挑战' : 'Start Challenge'}
+          <button className="btn-primary btn-lg lobby-start" onClick={handleStart} disabled={available === 0}>
+            {t('challenge_start', lang)}
           </button>
           <button className="btn-secondary" onClick={() => setCurrentView('explore')}>
-            {zh ? '返回探索' : 'Back to Explore'}
+            {t('back_to_explore', lang)}
           </button>
         </div>
       </div>

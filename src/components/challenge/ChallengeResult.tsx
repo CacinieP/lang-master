@@ -1,6 +1,7 @@
 import { useChallengeStore } from '@/store/challengeStore';
 import { useUserStore } from '@/store/userStore';
 import { useUIStore } from '@/store/uiStore';
+import { t } from '@/utils/i18n';
 import './Challenge.css';
 
 export function ChallengeResult() {
@@ -12,7 +13,7 @@ export function ChallengeResult() {
   const startChallenge = useChallengeStore((s) => s.startChallenge);
   const uiLanguage = useUserStore((s) => s.profile.ui_language);
   const setCurrentView = useUIStore((s) => s.setCurrentView);
-  const zh = uiLanguage === 'zh';
+  const lang = uiLanguage;
 
   const correctCount = answers.filter((a) => a.correct).length;
   const totalQuestions = answers.length;
@@ -35,29 +36,29 @@ export function ChallengeResult() {
   return (
     <div className="challenge-result">
       <div className="result-card">
-        <h2 className="result-title">{zh ? '挑战完成!' : 'Challenge Complete!'}</h2>
+        <h2 className="result-title">{t('challenge_result_title_alt', lang)}</h2>
 
         <div className="result-stats-grid">
           <div className="result-stat-block">
             <span className="stat-value">{score}</span>
-            <span className="stat-label">{zh ? '总分' : 'Total Score'}</span>
+            <span className="stat-label">{t('result_total_score', lang)}</span>
           </div>
           <div className="result-stat-block">
             <span className="stat-value">{accuracy}%</span>
-            <span className="stat-label">{zh ? '正确率' : 'Accuracy'}</span>
+            <span className="stat-label">{t('result_accuracy_label', lang)}</span>
           </div>
           <div className="result-stat-block">
             <span className="stat-value">{correctCount}/{totalQuestions}</span>
-            <span className="stat-label">{zh ? '答对' : 'Correct'}</span>
+            <span className="stat-label">{t('result_correct_label', lang)}</span>
           </div>
           <div className="result-stat-block">
             <span className="stat-value">×{maxStreak}</span>
-            <span className="stat-label">{zh ? '最高连击' : 'Max Streak'}</span>
+            <span className="stat-label">{t('result_max_streak_label', lang)}</span>
           </div>
         </div>
 
         <div className="result-detail">
-          <h3 className="detail-title">{zh ? '逐题回顾' : 'Question Review'}</h3>
+          <h3 className="detail-title">{t('question_review', lang)}</h3>
           {answers.map((answer, i) => {
             const problem = problems[i];
             return (
@@ -72,8 +73,8 @@ export function ChallengeResult() {
                 </div>
                 {!answer.correct && (
                   <div className="review-answer-detail">
-                    <span className="review-your-answer">{zh ? '你的答案: ' : 'Your answer: '}{answer.selected}</span>
-                    <span className="review-correct-answer">{zh ? '正确答案: ' : 'Correct: '}{problem?.test.correct_answer}</span>
+                    <span className="review-your-answer">{t('your_answer', lang)}{answer.selected}</span>
+                    <span className="review-correct-answer">{t('correct_answer', lang)}{problem?.test.correct_answer}</span>
                   </div>
                 )}
               </div>
@@ -83,13 +84,13 @@ export function ChallengeResult() {
 
         <div className="result-actions">
           <button className="btn-primary btn-lg" onClick={handlePlayAgain}>
-            {zh ? '再来一次' : 'Play Again'}
+            {t('play_again', lang)}
           </button>
           <button className="btn-secondary" onClick={handleBackToLobby}>
-            {zh ? '返回大厅' : 'Back to Lobby'}
+            {t('back_to_lobby', lang)}
           </button>
           <button className="btn-secondary" onClick={handleBackToExplore}>
-            {zh ? '返回探索' : 'Back to Explore'}
+            {t('back_to_explore', lang)}
           </button>
         </div>
       </div>

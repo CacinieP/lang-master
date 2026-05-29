@@ -5,6 +5,12 @@ import { shuffle } from '@/utils/shuffle';
 
 type View = 'welcome' | 'explore' | 'challenge';
 
+export interface ToastMessage {
+  id: number;
+  text: string;
+  type: 'warning' | 'error' | 'success';
+}
+
 interface UIState {
   currentView: View;
   sidebarOpen: boolean;
@@ -13,6 +19,7 @@ interface UIState {
   equivalentsOpen: Record<string, boolean>;
   languageDisplayOrder: AlphaLanguage[];
   selectedLanguages: AlphaLanguage[];
+  toasts: ToastMessage[];
 
   setCurrentView: (view: View) => void;
   toggleSidebar: () => void;
@@ -21,7 +28,11 @@ interface UIState {
   toggleEquivalents: (conceptId: string) => void;
   shuffleLanguageOrder: () => void;
   setSelectedLanguages: (langs: AlphaLanguage[]) => void;
+  addToast: (text: string, type?: ToastMessage['type']) => void;
+  dismissToast: (id: number) => void;
 }
+
+let toastCounter = 0;
 
 export const useUIStore = create<UIState>((set) => ({
   currentView: 'welcome',
@@ -31,6 +42,7 @@ export const useUIStore = create<UIState>((set) => ({
   equivalentsOpen: {},
   languageDisplayOrder: shuffle([...ALPHA_LANGUAGES]),
   selectedLanguages: ALPHA_LANGUAGES.slice(0, 3) as AlphaLanguage[],
+  toasts: [],
 
   setCurrentView: (view) => set({ currentView: view }),
 
@@ -49,4 +61,15 @@ export const useUIStore = create<UIState>((set) => ({
     set({ languageDisplayOrder: shuffle([...ALPHA_LANGUAGES]) }),
 
   setSelectedLanguages: (langs) => set({ selectedLanguages: langs }),
+
+  addToast: (text, type = 'warning') => {
+    const id = ++toastCounter;
+    set((s) => ({ toasts: [...s.toasts, { id, text, type }] }));
+    setTimeout(() => {
+      set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) }));
+    }, 4000);
+  },
+
+  dismissToast: (id) =>
+    set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })),
 }));

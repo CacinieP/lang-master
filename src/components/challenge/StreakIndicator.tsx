@@ -9,8 +9,8 @@ export function StreakIndicator({ streak }: Props) {
   const intensity = Math.min(streak, 5);
 
   return (
-    <div className={`streak-indicator intensity-${intensity}`}>
-      <span className="streak-fire">🔥</span>
+    <div className={`streak-indicator intensity-${intensity}`} aria-label={`Streak: ${streak}, multiplier: ×${multiplier.toFixed(1)}`}>
+      <span className="streak-fire" aria-hidden="true">🔥</span>
       <span className="streak-count">×{streak}</span>
       <span className="streak-mult">×{multiplier.toFixed(1)}</span>
     </div>

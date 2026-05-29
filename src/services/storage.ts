@@ -19,11 +19,12 @@ function read<T>(key: string, fallback: T): T {
   }
 }
 
-function write(key: string, value: unknown): void {
+function write(key: string, value: unknown): boolean {
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch {
-    // localStorage full — silently fail
+    return false;
   }
 }
 
@@ -35,8 +36,8 @@ export function loadProfile(): UserProfile {
   return { ...defaultProfile(), ...stored };
 }
 
-export function saveProfile(profile: UserProfile): void {
-  write(STORAGE_KEYS.profile, profile);
+export function saveProfile(profile: UserProfile): boolean {
+  return write(STORAGE_KEYS.profile, profile);
 }
 
 // --- Progress ---
@@ -45,8 +46,8 @@ export function loadProgress(): Record<string, ConceptProgress> {
   return read<Record<string, ConceptProgress>>(STORAGE_KEYS.progress, {});
 }
 
-export function saveProgress(progress: Record<string, ConceptProgress>): void {
-  write(STORAGE_KEYS.progress, progress);
+export function saveProgress(progress: Record<string, ConceptProgress>): boolean {
+  return write(STORAGE_KEYS.progress, progress);
 }
 
 // --- Clear ---

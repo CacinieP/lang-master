@@ -28,11 +28,12 @@ export function updateProgressAfterQuiz(
   const progress = existing ?? defaultConceptProgress();
   const delta = passed ? 0.3 : -0.05;
   const newScore = Math.max(0, Math.min(1, progress.mastery_score + delta));
+  const newAttempts = progress.attempts + 1;
 
   return {
     ...progress,
-    status: getConceptStatus({ ...progress, mastery_score: newScore }),
-    attempts: progress.attempts + 1,
+    status: getConceptStatus({ ...progress, mastery_score: newScore, attempts: newAttempts }),
+    attempts: newAttempts,
     last_attempted_at: Date.now(),
     best_result: passed
       ? newScore >= MASTERY_THRESHOLD

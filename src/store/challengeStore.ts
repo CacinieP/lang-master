@@ -53,6 +53,7 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
   startChallenge: () => {
     const { config } = get();
     const problems = assembleProblems(config);
+    if (problems.length === 0) return;
     set({
       problems,
       currentIndex: 0,
@@ -68,12 +69,13 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
   },
 
   submitAnswer: (testId, selected) => {
-    const { problems, currentIndex, streak, maxStreak, score, config, timeRemaining } = get();
+    const state = get();
+    const { problems, currentIndex, streak, maxStreak, score, config, timeRemaining, answers } = state;
     const problem = problems[currentIndex];
     if (!problem) return;
 
     const correct = selected === problem.test.correct_answer;
-    const timeMs = Date.now() - get().startedAt;
+    const timeMs = Date.now() - state.startedAt;
     const newStreak = correct ? streak + 1 : 0;
     const newMaxStreak = Math.max(maxStreak, newStreak);
     const points = calculateScore(
@@ -86,7 +88,7 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
 
     const answer: Answer = { testId, selected, correct, timeMs, score: points };
     set({
-      answers: [...get().answers, answer],
+      answers: [...answers, answer],
       score: score + points,
       streak: newStreak,
       maxStreak: newMaxStreak,

@@ -14,7 +14,7 @@ export function ChallengeTimer({ timeRemaining, timeLimit }: Props) {
   else if (pct < 50) color = 'var(--accent-orange)';
 
   return (
-    <div className="challenge-timer">
+    <div className="challenge-timer" role="timer" aria-live="polite" aria-label={`Time remaining: ${display}`}>
       <div className="timer-bar">
         <div className="timer-bar-fill" style={{ width: `${pct}%`, backgroundColor: color }} />
       </div>

@@ -1,5 +1,6 @@
 import type { Trap } from '@/types';
 import { useUserStore } from '@/store/userStore';
+import { t } from '@/utils/i18n';
 
 interface Props {
   sourceLang: string;
@@ -15,6 +16,7 @@ const SEVERITY_COLORS: Record<string, string> = {
 
 export function TrapCard({ sourceLang, targetLang, trap }: Props) {
   const uiLanguage = useUserStore((s) => s.profile.ui_language);
+  const lang = uiLanguage;
 
   return (
     <div className="trap-card" data-severity={trap.severity}>
@@ -24,19 +26,19 @@ export function TrapCard({ sourceLang, targetLang, trap }: Props) {
           style={{ backgroundColor: SEVERITY_COLORS[trap.severity] }}
         />
         <span className="trap-lang-pair">{sourceLang} → {targetLang}</span>
-        <span className="severity-label">{trap.severity}</span>
+        <span className="severity-label">{t('severity_' + trap.severity, lang)}</span>
       </div>
       <div className="trap-description">{trap.description}</div>
       <div className="trap-examples">
         <div className="trap-example wrong">
           <span className="example-label">
-            {uiLanguage === 'zh' ? '错误' : 'Wrong'}
+            {t('example_wrong', lang)}
           </span>
           <code>{trap.example_wrong}</code>
         </div>
         <div className="trap-example correct">
           <span className="example-label">
-            {uiLanguage === 'zh' ? '正确' : 'Correct'}
+            {t('example_correct', lang)}
           </span>
           <code>{trap.example_correct}</code>
         </div>

@@ -25,6 +25,15 @@
   cursor: pointer;
   transition: background 0.1s;
   border-left: 3px solid transparent;
+  width: 100%;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  background: none;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
 }
 
 .concept-tree-node:hover {
@@ -34,6 +43,11 @@
 .concept-tree-node.active {
   background: var(--bg-tertiary);
   border-left-color: var(--accent-blue);
+}
+
+.concept-tree-node:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: -2px;
 }
 
 .node-status {

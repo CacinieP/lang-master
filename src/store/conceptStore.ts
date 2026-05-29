@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { ConceptNode, Layer, Paradigm } from '@/types';
 import { initConceptEngine, getConceptById, getAllConcepts, getConceptsByLayer } from '@/services/conceptEngine';
+import { conceptGraph } from '@/data/graph';
 
 interface ConceptState {
   concepts: ConceptNode[];
@@ -24,7 +25,7 @@ export const useConceptStore = create<ConceptState>((set, get) => ({
 
   init: (concepts) => {
     // Also initialize the concept engine service
-    initConceptEngine(concepts, { edges: [] }); // graph initialized separately
+    initConceptEngine(concepts, conceptGraph);
     set({ concepts });
   },
 

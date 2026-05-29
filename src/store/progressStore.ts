@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { ConceptProgress, Layer } from '@/types';
 import { loadProgress, saveProgress } from '@/services/storage';
 import { updateProgressAfterQuiz, calculateLayerProgress } from '@/services/masteryTracker';
+import { useUIStore } from './uiStore';
 
 interface ProgressState {
   conceptProgress: Record<string, ConceptProgress>;
@@ -34,7 +35,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const updated = updateProgressAfterQuiz(existing, passed, layer);
     const newProgress = { ...conceptProgress, [conceptId]: updated };
     const layerProgress = calculateLayerProgress(newProgress, conceptLayers, totalPerLayer);
-    saveProgress(newProgress);
+    saveProgress(newProgress) || useUIStore.getState().addToast('保存失败，请检查浏览器存储空间', 'error');
     set({ conceptProgress: newProgress, layerProgress });
   },
 

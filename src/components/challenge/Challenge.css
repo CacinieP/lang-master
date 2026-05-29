@@ -49,6 +49,7 @@
 .layer-buttons {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .mode-btn,
@@ -79,6 +80,13 @@
 .time-btn:hover,
 .layer-btn:hover {
   border-color: var(--accent-blue);
+}
+
+.mode-btn:focus-visible,
+.time-btn:focus-visible,
+.layer-btn:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
 }
 
 .mode-icon {
@@ -504,4 +512,23 @@
   display: flex;
   gap: 12px;
   justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .arena-options {
+    grid-template-columns: 1fr;
+  }
+
+  .result-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lobby-card {
+    padding: 20px;
+  }
+
+  .challenge-arena {
+    padding: 12px;
+  }
 }

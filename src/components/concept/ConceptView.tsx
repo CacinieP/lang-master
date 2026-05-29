@@ -5,6 +5,7 @@ import { ParadigmView } from './ParadigmView';
 import { TrapAdvisor } from '../trap/TrapAdvisor';
 import { SemanticQuiz } from '../practice/SemanticQuiz';
 import { useUIStore } from '@/store/uiStore';
+import { t } from '@/utils/i18n';
 import './ConceptView.css';
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 
 export function ConceptView({ concept }: Props) {
   const uiLanguage = useUserStore((s) => s.profile.ui_language);
+  const lang = uiLanguage;
   const trapPanelOpen = useUIStore((s) => s.trapPanelOpen);
   const quizPanelOpen = useUIStore((s) => s.quizPanelOpen);
   const toggleTrapPanel = useUIStore((s) => s.toggleTrapPanel);
@@ -24,7 +26,7 @@ export function ConceptView({ concept }: Props) {
     <div className="concept-view">
       <div className="concept-header">
         <div className="concept-badges">
-          <span className="badge badge-layer">{layerName.short} {layerName[uiLanguage]}</span>
+          <span className="badge badge-layer">{layerName.short} {layerName[lang]}</span>
           <span className="badge badge-difficulty">P{concept.difficulty}</span>
         </div>
         <h2 className="concept-title">
@@ -43,13 +45,13 @@ export function ConceptView({ concept }: Props) {
             className={`panel-toggle ${trapPanelOpen ? 'active' : ''}`}
             onClick={toggleTrapPanel}
           >
-            ⚠ {uiLanguage === 'zh' ? '语言切换陷阱' : 'Traps'}
+            ⚠ {t('traps_title', lang)}
           </button>
           <button
             className={`panel-toggle ${quizPanelOpen ? 'active' : ''}`}
             onClick={toggleQuizPanel}
           >
-            ✓ {uiLanguage === 'zh' ? '语义验证' : 'Quiz'}
+            ✓ {t('quiz_title', lang)}
           </button>
         </div>
 

@@ -1,7 +1,7 @@
 import type { AlphaLanguage } from '@/types';
 
 interface Token {
-  type: 'keyword' | 'string' | 'number' | 'comment' | 'operator' | 'type' | 'function' | 'punctuation' | 'identifier';
+  type: 'keyword' | 'string' | 'number' | 'comment' | 'operator' | 'type' | 'function' | 'punctuation' | 'identifier' | 'whitespace';
   value: string;
 }
 
@@ -26,17 +26,44 @@ function tokenize(code: string, lang: AlphaLanguage): Token[] {
   let i = 0;
 
   while (i < code.length) {
-    // Comments
+    // C-style block comments /* ... */
+    if (code[i] === '/' && code[i + 1] === '*') {
+      const start = i;
+      i += 2;
+      while (i < code.length - 1 && !(code[i] === '*' && code[i + 1] === '/')) i++;
+      i += 2;
+      tokens.push({ type: 'comment', value: code.slice(start, i) });
+      continue;
+    }
+
+    // Line comments //
     if (code[i] === '/' && code[i + 1] === '/') {
       const start = i;
       while (i < code.length && code[i] !== '\n') i++;
       tokens.push({ type: 'comment', value: code.slice(start, i) });
       continue;
     }
-    if (code[i] === '#') {
+
+    // Python # comments — only if not inside a string context
+    if (lang === 'python' && code[i] === '#') {
       const start = i;
       while (i < code.length && code[i] !== '\n') i++;
       tokens.push({ type: 'comment', value: code.slice(start, i) });
+      continue;
+    }
+
+    // Triple-quoted strings (""" or ''')
+    if ((code[i] === '"' && code[i + 1] === '"' && code[i + 2] === '"') ||
+        (code[i] === "'" && code[i + 1] === "'" && code[i + 2] === "'")) {
+      const quote3 = code.slice(i, i + 3);
+      const start = i;
+      i += 3;
+      while (i < code.length && code.slice(i, i + 3) !== quote3) {
+        if (code[i] === '\\') i++;
+        i++;
+      }
+      if (i < code.length) i += 3;
+      tokens.push({ type: 'string', value: code.slice(start, i) });
       continue;
     }
 
@@ -45,11 +72,11 @@ function tokenize(code: string, lang: AlphaLanguage): Token[] {
       const quote = code[i];
       const start = i;
       i++;
-      while (i < code.length && code[i] !== quote) {
+      while (i < code.length && code[i] !== quote && code[i] !== '\n') {
         if (code[i] === '\\') i++;
         i++;
       }
-      i++;
+      if (i < code.length && code[i] === quote) i++;
       tokens.push({ type: 'string', value: code.slice(start, i) });
       continue;
     }
@@ -94,7 +121,15 @@ function tokenize(code: string, lang: AlphaLanguage): Token[] {
       continue;
     }
 
-    // Whitespace and other
+    // Whitespace — keep as-is without wrapping in spans
+    if (/\s/.test(code[i])) {
+      const start = i;
+      while (i < code.length && /\s/.test(code[i])) i++;
+      tokens.push({ type: 'whitespace', value: code.slice(start, i) });
+      continue;
+    }
+
+    // Other non-ASCII (Chinese, etc.) — group consecutive chars
     tokens.push({ type: 'identifier', value: code[i] });
     i++;
   }
@@ -106,6 +141,7 @@ export function highlightCode(code: string, lang: AlphaLanguage): string {
   const tokens = tokenize(code, lang);
   return tokens
     .map((t) => {
+      if (t.type === 'whitespace') return t.value;
       const escaped = t.value
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')

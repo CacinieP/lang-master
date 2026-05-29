@@ -12,7 +12,7 @@ export function CodeBlock({ code, language }: Props) {
   return (
     <div className="code-block">
       <pre className="code-pre">
-        <code dangerouslySetInnerHTML={{ __html: html }} />
+        <code dangerouslySetInnerHTML={{ __html: html }} aria-label={`${language} code: ${code}`} />
       </pre>
     </div>
   );

@@ -29,6 +29,7 @@ export interface UserProfile {
   learning_path: 'path_a' | 'path_b' | 'path_c' | 'custom';
   concept_progress: Record<string, ConceptProgress>;
   settings: UserSettings;
+  onboarding_completed: boolean;
 }
 
 export interface UserSettings {
@@ -56,6 +57,7 @@ export function defaultProfile(): UserProfile {
       show_traps_auto: true,
       default_mode: 'explore',
     },
+    onboarding_completed: false,
   };
 }
 
