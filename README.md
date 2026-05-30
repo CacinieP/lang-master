@@ -2,6 +2,10 @@
 
 > 从自然语言学与编程哲学的视角，帮助初学者精通编程语言排行榜 Top 10 语言，并掌握超越单一语言的元能力。
 
+[![Deploy](https://img.shields.io/github/actions/workflow/status/CacinieP/lang-master/deploy.yml?branch=main&style=flat-square)](https://github.com/CacinieP/lang-master/actions/workflows/deploy.yml)
+[![Demo](https://img.shields.io/badge/demo-GitHub%20Pages-39c5bb?style=flat-square)](https://caciniep.github.io/lang-master/)
+[![License](https://img.shields.io/github/license/CacinieP/lang-master?style=flat-square)](LICENSE)
+
 ## 项目定位
 
 Lang Master 不是另一门编程教程——它是**编程语言的语言学**。就像 Typing Master 不是教你法语语法而是训练你的法语打字直觉一样，Lang Master 不教你写 Python 代码，而是训练你理解 Python 作为一种"语言"的五层结构（词法→构造→句法→语义→语用），并能将这种理解迁移到 Java、Rust、Go 等9种其他语言。
@@ -68,6 +72,8 @@ src/
 ## 状态
 
 **当前阶段：Alpha 开发** — React + TypeScript + Vite Web 应用，4语言(Python/C/Java/Rust) × P1-P3概念 × 探索模式。
+
+在线体验：[https://caciniep.github.io/lang-master/](https://caciniep.github.io/lang-master/)
 
 ```
 npm run dev      # 启动开发服务器
