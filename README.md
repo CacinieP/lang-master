@@ -1,5 +1,107 @@
 # Lang Master
 
+> From the perspective of natural language linguistics and programming philosophy, help beginners master the Top 10 programming languages and acquire meta-skills that transcend any single language.
+
+[![Deploy](https://img.shields.io/github/actions/workflow/status/CacinieP/lang-master/deploy.yml?branch=main&style=flat-square)](https://github.com/CacinieP/lang-master/actions/workflows/deploy.yml)
+[![Demo](https://img.shields.io/badge/demo-GitHub%20Pages-39c5bb?style=flat-square)](https://caciniep.github.io/lang-master/)
+[![License](https://img.shields.io/github/license/CacinieP/lang-master?style=flat-square)](LICENSE)
+
+## Project Positioning
+
+Lang Master is not another programming tutorial — it is **the linguistics of programming languages**. Just as Typing Master doesn't teach you French grammar but trains your French typing intuition, Lang Master doesn't teach you to write Python code; it trains you to understand Python as a "language" through its five-layer structure (Lexicon → Construction → Syntax → Semantics → Pragmatics), and to transfer this understanding to Java, Rust, Go, and 9 other languages.
+
+## Core Philosophy
+
+1. **Programming languages are languages** — They can be analyzed using the five-layer framework of natural linguistics (Phonology → Morphology → Syntax → Semantics → Pragmatics)
+2. **Language shapes thought** — The weak form of Sapir-Whorf: language shapes but does not determine how we think
+3. **Meta-skills outrank syntax** — Paradigm switching, abstraction recognition, semantic intuition, and 7 other meta-skills are the goal
+4. **Genealogical affinity reduces cost** — Learning Rust after C++ costs less than learning Rust after R (analogous to migration within the Indo-European language family)
+
+## Target Languages (2026 Combined Top 10 Rankings)
+
+| # | Language | Primary Paradigm | Core Training Value |
+|---|---|---|---|
+| 1 | Python | OOP+FP+Procedural | Multi-paradigm coexistence intuition |
+| 2 | C | Procedural | Low-level and precise control thinking |
+| 3 | Java | OOP | Object-organization thinking |
+| 4 | C++ | Multi-paradigm | Abstraction gradient thinking (from pointers to templates) |
+| 5 | C# | OOP+FP | Language evolution thinking |
+| 6 | JavaScript | Prototype OOP+FP+Async | Async and prototype thinking |
+| 7 | Go | Procedural+CSP | Concise concurrency thinking |
+| 8 | Rust | FP+trait+Ownership | Safety and resource management thinking |
+| 9 | Swift | Protocol OOP+FP | Value-type-first thinking |
+| 10 | R | Vector+FP | Data thinking |
+
+## Tech Stack
+
+- **Frontend**: React 19 + TypeScript + Vite
+- **State Management**: Zustand
+- **Data Storage**: localStorage (Alpha), IndexedDB (Beta)
+- **Syntax Highlighting**: Custom lightweight tokenizer (zero external dependencies)
+
+## Project Structure
+
+```
+src/
+├── types/          # TypeScript type definitions
+├── data/           # Concept data (4 languages × 24 concepts)
+│   ├── concepts/   # One file per layer
+│   ├── constants.ts
+│   └── graph.ts
+├── store/          # Zustand state management
+├── services/       # Business logic
+├── components/     # UI components
+│   ├── layout/     # Layout
+│   ├── navigation/ # Navigation (LayerNavigator, ConceptTree)
+│   ├── concept/    # Concept display (ParadigmView, ExpressionCard)
+│   ├── trap/       # Trap hints (TrapAdvisor)
+│   ├── practice/   # Practice (SemanticQuiz)
+│   └── onboarding/ # Onboarding (WelcomeScreen)
+└── utils/          # Utility functions
+```
+
+## Project Documentation
+
+| Document | Description |
+|---|---|
+| [docs/VISION.md](docs/VISION.md) | Project vision, architecture design, Typing Master mapping |
+| [docs/LINGUISTICS-FRAMEWORK.md](docs/LINGUISTICS-FRAMEWORK.md) | Natural linguistics five-layer framework → programming mapping |
+| [docs/PROGRAMMING-PHILOSOPHY.md](docs/PROGRAMMING-PHILOSOPHY.md) | Programming philosophy research (paradigms, types, errors, memory, concurrency) |
+| [docs/RANKINGS-RESEARCH.md](docs/RANKINGS-RESEARCH.md) | TIOBE/PYPL/SO ranking data and language selection rationale |
+
+## Status
+
+**Current phase: Alpha development** — React + TypeScript + Vite web app, 4 languages (Python/C/Java/Rust) × P1-P3 concepts × explore mode.
+
+Live demo: [https://caciniep.github.io/lang-master/](https://caciniep.github.io/lang-master/)
+
+```
+npm run dev      # Start dev server
+npm run build    # Build production version
+npm run test     # Run tests
+```
+
+## Design Inspiration
+
+This project's architecture inherits from [Typing Master](https://github.com/CacinieP/typing-master) (a multi-language typing practice desktop app):
+
+| Typing Master Concept | Lang Master Correspondence |
+|---|---|
+| 6 natural languages → typing practice | 10 programming languages → concept understanding practice |
+| Virtual keyboard (3 layouts) | Paradigm view (3 paradigm switches) |
+| Character-by-character verification | Concept-by-concept verification |
+| WPM speed tracking | Concept mastery rate tracking |
+| Dead key combinations (accent) | Concept combinations (primitive → compound) |
+| CSV vocabulary import/export | Course package import/export |
+
+## License
+
+MIT License — Copyright 2025-2026 CacinieP
+
+---
+
+# Lang Master
+
 > 从自然语言学与编程哲学的视角，帮助初学者精通编程语言排行榜 Top 10 语言，并掌握超越单一语言的元能力。
 
 [![Deploy](https://img.shields.io/github/actions/workflow/status/CacinieP/lang-master/deploy.yml?branch=main&style=flat-square)](https://github.com/CacinieP/lang-master/actions/workflows/deploy.yml)
