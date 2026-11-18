@@ -4,6 +4,9 @@ import { DEFAULT_CONFIG, assembleProblems, calculateScore } from '@/services/cha
 import { loadChallengeStats, saveChallengeStats } from '@/services/storage';
 import type { ChallengeStats } from '@/types';
 import { useProgressStore } from './progressStore';
+import { useUIStore } from './uiStore';
+import { useUserStore } from './userStore';
+import { t } from '@/utils/i18n';
 
 export type ChallengeStatus = 'idle' | 'playing' | 'finished';
 
@@ -137,7 +140,9 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
 
   finishChallenge: () => {
     const state = get();
-    if (state.status === 'finished') return; // idempotent: no double settlement
+    // Only settle a live run: guards finished (idempotent) AND idle/reset
+    // states so a stale callback can never record an empty game (issue #28).
+    if (state.status !== 'playing') return;
     const { answers, score, config, stats } = state;
     const total = answers.length;
     const correct = answers.filter((a) => a.correct).length;
@@ -153,7 +158,10 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
         ...stats.history,
       ].slice(0, 10),
     };
-    saveChallengeStats(nextStats);
+    saveChallengeStats(nextStats) || useUIStore.getState().addToast(
+      t('save_failed', useUserStore.getState().profile.ui_language),
+      'error',
+    );
     set({ status: 'finished', stats: nextStats, isNewRecord });
   },
 
