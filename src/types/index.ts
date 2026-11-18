@@ -20,6 +20,7 @@ export type {
 } from './user';
 export { defaultProfile, defaultConceptProgress } from './user';
 
-export type { ConceptAttempt, TrapEncounter, SessionStats } from './session';
+export type { ConceptAttempt, TrapEncounter, SessionStats, ChallengeRunRecord, ChallengeStats } from './session';
+export { defaultChallengeStats } from './session';
 
 export type { EdgeType, GraphEdge, ConceptGraph } from './graph';

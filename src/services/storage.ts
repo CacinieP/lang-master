@@ -1,5 +1,5 @@
-import type { UserProfile, ConceptProgress } from '@/types';
-import { defaultProfile } from '@/types';
+import type { UserProfile, ConceptProgress, ChallengeStats } from '@/types';
+import { defaultProfile, defaultChallengeStats } from '@/types';
 
 const STORAGE_KEYS = {
   profile: 'langmaster_profile',
@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   settings: 'langmaster_settings',
   ui_state: 'lm_ui_state',
   concept_cache: 'lm_concept_cache_hot',
+  challenge_stats: 'langmaster_challenge_stats',
 } as const;
 
 function read<T>(key: string, fallback: T): T {
@@ -48,6 +49,23 @@ export function loadProgress(): Record<string, ConceptProgress> {
 
 export function saveProgress(progress: Record<string, ConceptProgress>): boolean {
   return write(STORAGE_KEYS.progress, progress);
+}
+
+// --- Challenge stats (issue #18) ---
+
+export function loadChallengeStats(): ChallengeStats {
+  const stored = read<Partial<ChallengeStats> | null>(STORAGE_KEYS.challenge_stats, null);
+  if (!stored) return defaultChallengeStats();
+  const defaults = defaultChallengeStats();
+  return {
+    ...defaults,
+    ...stored,
+    history: Array.isArray(stored.history) ? stored.history.slice(0, 10) : [],
+  };
+}
+
+export function saveChallengeStats(stats: ChallengeStats): boolean {
+  return write(STORAGE_KEYS.challenge_stats, stats);
 }
 
 // --- Clear ---

@@ -574,3 +574,27 @@
     padding: 12px;
   }
 }
+/* Challenge stats persistence (issue #18) */
+.new-record-banner {
+  margin: 0 auto 16px;
+  padding: 8px 20px;
+  width: fit-content;
+  border-radius: var(--radius-md);
+  background: rgba(224, 175, 104, 0.15);
+  border: 1px solid var(--accent-yellow);
+  color: var(--accent-yellow);
+  font-weight: 700;
+  font-size: 1rem;
+  animation: record-pop 0.4s ease-out;
+}
+
+@keyframes record-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.info-badge-record {
+  border-color: var(--accent-yellow);
+  color: var(--accent-yellow);
+}

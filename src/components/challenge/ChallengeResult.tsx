@@ -11,6 +11,7 @@ export function ChallengeResult() {
   const problems = useChallengeStore((s) => s.problems);
   const resetChallenge = useChallengeStore((s) => s.resetChallenge);
   const startChallenge = useChallengeStore((s) => s.startChallenge);
+  const isNewRecord = useChallengeStore((s) => s.isNewRecord);
   const uiLanguage = useUserStore((s) => s.profile.ui_language);
   const setCurrentView = useUIStore((s) => s.setCurrentView);
   const lang = uiLanguage;
@@ -40,6 +41,10 @@ export function ChallengeResult() {
     <div className="challenge-result">
       <div className="result-card">
         <h2 className="result-title">{t('challenge_result_title_alt', lang)}</h2>
+
+        {isNewRecord && (
+          <div className="new-record-banner" role="status">🏆 {t('new_record', lang)}</div>
+        )}
 
         <div className="result-stats-grid">
           <div className="result-stat-block">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useChallengeStore } from '@/store/challengeStore';
 import { useUserStore } from '@/store/userStore';
 import { useUIStore } from '@/store/uiStore';
@@ -12,13 +12,12 @@ export function ChallengeLobby() {
   const config = useChallengeStore((s) => s.config);
   const setConfig = useChallengeStore((s) => s.setConfig);
   const startChallenge = useChallengeStore((s) => s.startChallenge);
+  const stats = useChallengeStore((s) => s.stats);
   const uiLanguage = useUserStore((s) => s.profile.ui_language);
   const setCurrentView = useUIStore((s) => s.setCurrentView);
-  const [available, setAvailable] = useState(0);
-
-  useEffect(() => {
-    setAvailable(countAvailableProblems(config));
-  }, [config]);
+  // Compute synchronously so the lobby never flashes "0 questions" / a
+  // disabled Start button on first render (was useState(0) + useEffect).
+  const available = useMemo(() => countAvailableProblems(config), [config]);
 
   const toggleLayer = (layer: Layer) => {
     const layers = config.layers.includes(layer)
@@ -118,8 +117,14 @@ export function ChallengeLobby() {
         </div>
 
         <div className="lobby-info">
-          <span className="info-badge">{available} {lang === 'zh' ? '题可用' : 'questions'}</span>
+          <span className="info-badge">{t('questions_available', lang).replace('{count}', String(available))}</span>
           <span className="info-badge">{t('four_languages', lang)}</span>
+          {stats.gamesPlayed > 0 && (
+            <>
+              <span className="info-badge info-badge-record">🏆 {t('lobby_best_score', lang).replace('{score}', String(stats.bestScore))}</span>
+              <span className="info-badge">{stats.gamesPlayed === 1 ? t('lobby_games_played_one', lang) : t('lobby_games_played', lang).replace('{count}', String(stats.gamesPlayed))}</span>
+            </>
+          )}
         </div>
 
         <div className="lobby-actions">
