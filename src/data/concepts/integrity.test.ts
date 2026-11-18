@@ -97,6 +97,11 @@ describe('concept data integrity', () => {
       expect(ALPHA_LANGUAGES).toContain(t.language_context);
       expect([1, 2, 3, 4, 5]).toContain(t.difficulty);
       expect(t.question.length).toBeGreaterThan(0);
+      // Issue #12: every question must be explainable.
+      expect(t.explanation.trim().length, `${t.id}: explanation required`).toBeGreaterThan(0);
+      if (t.explanation_en !== undefined) {
+        expect(t.explanation_en.trim().length, `${t.id}: explanation_en`).toBeGreaterThan(0);
+      }
     }
   });
 });

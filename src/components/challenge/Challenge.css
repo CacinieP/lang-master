@@ -294,6 +294,19 @@
   margin-bottom: 20px;
 }
 
+.arena-question-text .question-text-part {
+  font-size: 1.05rem;
+  margin: 0 0 12px;
+}
+
+.arena-question-text .code-block {
+  margin: 0 0 14px;
+}
+
+.arena-question-text .code-pre {
+  font-size: 0.9rem;
+}
+
 .arena-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -372,8 +385,27 @@
   border-radius: var(--radius-sm);
 }
 
-.arena-next {
+.feedback-explanation {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.arena-next-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-top: 12px;
+}
+
+.arena-next-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.arena-next {
+  margin-top: 0;
 }
 
 /* Result */
@@ -498,6 +530,9 @@
 .review-answer-detail {
   margin-top: 4px;
   font-size: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
 }
 
 .review-your-answer {
@@ -506,6 +541,13 @@
 
 .review-correct-answer {
   color: var(--accent-green);
+}
+
+.review-explanation {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
 }
 
 .result-actions {

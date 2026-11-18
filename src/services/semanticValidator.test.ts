@@ -10,6 +10,8 @@ const test: SemanticTest = {
   options: ['10', '15', '5'],
   language_context: 'java',
   difficulty: 1,
+  explanation: '+= 是复合赋值：10 + 5 = 15。',
+  explanation_en: '+= is compound assignment: 10 + 5 = 15.',
 };
 
 describe('checkAnswer', () => {
@@ -22,20 +24,32 @@ describe('checkAnswer', () => {
     expect(checkAnswer(test, '15 ').correct).toBe(false);
   });
 
-  it('gives a Chinese explanation by default', () => {
-    expect(checkAnswer(test, '15').explanation).toContain('正确');
-    expect(checkAnswer(test, '10').explanation).toContain('正确答案是：15');
+  it('gives Chinese feedback by default', () => {
+    expect(checkAnswer(test, '15').feedback).toContain('正确');
+    expect(checkAnswer(test, '10').feedback).toContain('正确答案是：15');
   });
 
-  it('gives an English explanation when requested', () => {
-    expect(checkAnswer(test, '15', 'en').explanation).toContain('Correct');
-    expect(checkAnswer(test, '10', 'en').explanation).toContain('The correct answer is: 15');
+  it('gives English feedback when requested', () => {
+    expect(checkAnswer(test, '15', 'en').feedback).toContain('Correct');
+    expect(checkAnswer(test, '10', 'en').feedback).toContain('The correct answer is: 15');
   });
 
-  it('appends the trap note when present', () => {
+  it('always returns the localized explanation (issue #12)', () => {
+    expect(checkAnswer(test, '15').explanation).toBe(test.explanation);
+    expect(checkAnswer(test, '10').explanation).toBe(test.explanation);
+    expect(checkAnswer(test, '15', 'en').explanation).toBe(test.explanation_en);
+    expect(checkAnswer(test, '10', 'en').explanation).toBe(test.explanation_en);
+  });
+
+  it('falls back to the Chinese explanation when English is missing', () => {
+    const zhOnly = { ...test, explanation_en: undefined };
+    expect(checkAnswer(zhOnly, '15', 'en').explanation).toBe(test.explanation);
+  });
+
+  it('passes the trap note through when present', () => {
     const withTrap = { ...test, trap_note: '注意整除' };
-    expect(checkAnswer(withTrap, '15').explanation).toContain('注意整除');
-    expect(checkAnswer(withTrap, '10').explanation).toContain('注意整除');
-    expect(checkAnswer(withTrap, '10', 'en').explanation).toContain('注意整除');
+    expect(checkAnswer(withTrap, '15').trap_note).toBe('注意整除');
+    expect(checkAnswer(withTrap, '10', 'en').trap_note).toBe('注意整除');
+    expect(checkAnswer(test, '15').trap_note).toBeUndefined();
   });
 });
