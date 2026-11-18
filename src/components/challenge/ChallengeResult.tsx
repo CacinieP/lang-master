@@ -18,6 +18,9 @@ export function ChallengeResult() {
   const correctCount = answers.filter((a) => a.correct).length;
   const totalQuestions = answers.length;
   const accuracy = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+  const conceptsPracticed = new Set(
+    answers.map((_a, i) => problems[i]?.concept.id).filter((id): id is string => Boolean(id)),
+  ).size;
 
   const handlePlayAgain = () => {
     resetChallenge();
@@ -54,6 +57,10 @@ export function ChallengeResult() {
           <div className="result-stat-block">
             <span className="stat-value">×{maxStreak}</span>
             <span className="stat-label">{t('result_max_streak_label', lang)}</span>
+          </div>
+          <div className="result-stat-block">
+            <span className="stat-value">{conceptsPracticed}</span>
+            <span className="stat-label">{t('result_concepts_label', lang)}</span>
           </div>
         </div>
 

@@ -1,6 +1,31 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChallengeStore } from './challengeStore';
+import { useProgressStore } from './progressStore';
 import { DEFAULT_CONFIG } from '@/services/challengeEngine';
+import { defaultConceptProgress } from '@/types';
+import type { Layer } from '@/types';
+
+function createLocalStorageMock() {
+  const store = new Map<string, string>();
+  return {
+    getItem: (k: string) => (store.has(k) ? store.get(k)! : null),
+    setItem: (k: string, v: string) => {
+      store.set(k, String(v));
+    },
+    removeItem: (k: string) => {
+      store.delete(k);
+    },
+    clear: () => store.clear(),
+  };
+}
+
+beforeEach(() => {
+  vi.stubGlobal('localStorage', createLocalStorageMock());
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 function reset() {
   useChallengeStore.getState().resetChallenge();
@@ -191,5 +216,65 @@ describe('challengeStore submission guards (issue #3)', () => {
     const p1 = useChallengeStore.getState().problems[1];
     useChallengeStore.getState().submitAnswer(p1.test.id, p1.test.correct_answer);
     expect(useChallengeStore.getState().answers[1].timeMs).toBe(500);
+  });
+});
+
+// Regression for issue #17: challenge answers must feed the mastery system.
+describe('challenge mastery integration (issue #17)', () => {
+  const conceptLayers: Record<string, Layer> = { literal_values: 'lexical' };
+  const totals: Record<Layer, number> = { lexical: 1, morphological: 0, syntax: 0, semantic: 0, pragmatic: 0 };
+
+  beforeEach(() => {
+    reset();
+    useProgressStore.setState({
+      conceptProgress: {},
+      layerProgress: { lexical: 0, morphological: 0, syntax: 0, semantic: 0, pragmatic: 0 },
+      conceptLayers: {},
+      totalPerLayer: { lexical: 0, morphological: 0, syntax: 0, semantic: 0, pragmatic: 0 },
+    });
+    useProgressStore.getState().load(conceptLayers, totals);
+  });
+
+  function startWithConcept(conceptId: string) {
+    // Restrict the pool to one concept's layer+difficulty via config, then find it.
+    useChallengeStore.getState().setConfig({ mode: 'count', questionCount: 50 });
+    useChallengeStore.getState().startChallenge();
+    const idx = useChallengeStore.getState().problems.findIndex((p) => p.concept.id === conceptId);
+    expect(idx, `concept ${conceptId} must be in the pool`).toBeGreaterThanOrEqual(0);
+    // Advance to the target problem without answering earlier ones.
+    useChallengeStore.setState({ currentIndex: idx });
+    return useChallengeStore.getState().problems[idx];
+  }
+
+  it('a correct challenge answer raises mastery and persists it', () => {
+    const problem = startWithConcept('literal_values');
+    useChallengeStore.getState().submitAnswer(problem.test.id, problem.test.correct_answer);
+    const progress = useProgressStore.getState();
+    expect(progress.getMasteryScore('literal_values')).toBeCloseTo(0.3);
+    expect(progress.getConceptStatus('literal_values')).toBe('practicing');
+    const persisted = JSON.parse(localStorage.getItem('langmaster_progress')!);
+    expect(persisted.literal_values.attempts).toBe(1);
+  });
+
+  it('a wrong challenge answer lowers mastery like explore mode', () => {
+    useProgressStore.setState({
+      conceptProgress: { literal_values: { ...defaultConceptProgress(), mastery_score: 0.5, attempts: 2 } },
+    });
+    const problem = startWithConcept('literal_values');
+    const wrong = problem.test.options.find((o) => o !== problem.test.correct_answer)!;
+    useChallengeStore.getState().submitAnswer(problem.test.id, wrong);
+    expect(useProgressStore.getState().getMasteryScore('literal_values')).toBeCloseTo(0.45);
+  });
+
+  it('repeated correct answers can master a concept through challenge alone', () => {
+    const problem = startWithConcept('literal_values');
+    for (let i = 0; i < 3; i++) {
+      useChallengeStore.setState({ showingFeedback: false });
+      useChallengeStore.getState().submitAnswer(problem.test.id, problem.test.correct_answer);
+    }
+    const progress = useProgressStore.getState();
+    expect(progress.getConceptStatus('literal_values')).toBe('mastered');
+    expect([...progress.getMasteredConceptIds()]).toContain('literal_values');
+    expect(progress.layerProgress.lexical).toBe(1);
   });
 });

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { ChallengeConfig, ChallengeProblem } from '@/services/challengeEngine';
 import { DEFAULT_CONFIG, assembleProblems, calculateScore } from '@/services/challengeEngine';
+import { useProgressStore } from './progressStore';
 
 export type ChallengeStatus = 'idle' | 'playing' | 'finished';
 
@@ -93,6 +94,8 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
     );
 
     const answer: Answer = { testId, selected, correct, timeMs, score: points };
+    // Challenge practice feeds the same mastery system as explore mode (issue #17).
+    useProgressStore.getState().recordQuizResult(problem.concept.id, problem.concept.layer, correct);
     set({
       answers: [...answers, answer],
       score: score + points,
