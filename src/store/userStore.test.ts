@@ -96,3 +96,44 @@ describe('userStore onboarding & settings', () => {
     expect(useUserStore.getState().profile.current_focus_language).toBeNull();
   });
 });
+
+// Issue #19: storage-failure toasts must follow the UI language.
+describe('save-failure toast localization (issue #19)', () => {
+  function failingStorage() {
+    return {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error('QuotaExceededError');
+      },
+      removeItem: () => {},
+      clear: () => {},
+    };
+  }
+
+  it('shows an English toast when the profile language is en', () => {
+    vi.stubGlobal('localStorage', failingStorage());
+    useUserStore.setState({ profile: { ...defaultProfile(), ui_language: 'en' }, isOnboarded: true });
+    useUIStore.setState({ toasts: [] });
+    useUserStore.getState().addKnownLanguage('python', 'beginner');
+    const toasts = useUIStore.getState().toasts;
+    expect(toasts).toHaveLength(1);
+    expect(toasts[0].text).toBe('Save failed — check browser storage');
+    expect(toasts[0].type).toBe('error');
+  });
+
+  it('shows a Chinese toast when the profile language is zh', () => {
+    vi.stubGlobal('localStorage', failingStorage());
+    useUserStore.setState({ profile: { ...defaultProfile(), ui_language: 'zh' }, isOnboarded: true });
+    useUIStore.setState({ toasts: [] });
+    useUserStore.getState().completeOnboarding();
+    expect(useUIStore.getState().toasts[0].text).toBe('保存失败，请检查浏览器存储空间');
+  });
+
+  it('setUILanguage failure toast uses the target language', () => {
+    vi.stubGlobal('localStorage', failingStorage());
+    useUserStore.setState({ profile: { ...defaultProfile(), ui_language: 'zh' }, isOnboarded: true });
+    useUIStore.setState({ toasts: [] });
+    useUserStore.getState().setUILanguage('en');
+    expect(useUIStore.getState().toasts[0].text).toBe('Save failed — check browser storage');
+  });
+});

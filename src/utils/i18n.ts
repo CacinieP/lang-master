@@ -25,6 +25,7 @@ const translations: TranslationMap = {
   explanation_label: { zh: '解析', en: 'Explanation' },
   transfer_note_label: { zh: '迁移提示', en: 'Transfer note' },
   challenge_next_hint: { zh: '按 Enter 继续', en: 'Press Enter to continue' },
+  quiz_keyboard_hint: { zh: '键盘：1-4 选择，Enter 提交/继续', en: 'Keys: 1-4 select, Enter submit/continue' },
   welcome_title: { zh: '欢迎来到 Lang Master', en: 'Welcome to Lang Master' },
   welcome_subtitle: { zh: '编程语言也有语法、词汇、语义——就像自然语言一样', en: 'Programming languages have grammar, vocabulary, semantics — just like natural languages' },
   survey_title: { zh: '你熟悉哪些编程语言？', en: 'Which programming languages are you familiar with?' },
