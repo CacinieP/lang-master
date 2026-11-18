@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ConceptNode } from '@/types';
 import { checkAnswer } from '@/services/semanticValidator';
 import { useProgressStore } from '@/store/progressStore';
@@ -21,42 +21,11 @@ export function SemanticQuiz({ concept }: Props) {
   const zh = uiLanguage === 'zh';
 
   const tests = concept.semantic_tests;
-  if (tests.length === 0) return null;
-
   const allAnswered = results.length === tests.length;
-  if (allAnswered) {
-    const correctCount = results.filter(Boolean).length;
-    return (
-      <div className="semantic-quiz">
-        <h4 className="quiz-title">{zh ? '测验完成！' : 'Quiz Complete!'}</h4>
-        <div className="quiz-summary">
-          <p className="quiz-summary-score">
-            {zh ? `答对 ${correctCount}/${tests.length} 题` : `${correctCount}/${tests.length} correct`}
-          </p>
-          <div className="quiz-summary-bar">
-            <div className="quiz-summary-fill" style={{ width: `${(correctCount / tests.length) * 100}%` }} />
-          </div>
-        </div>
-        <button
-          className="btn-primary"
-          onClick={() => {
-            setCurrentTestIndex(0);
-            setSelectedAnswer(null);
-            setShowResult(false);
-            setResults([]);
-          }}
-        >
-          {zh ? '重新测验' : 'Retry'}
-        </button>
-      </div>
-    );
-  }
-
   const test = tests[currentTestIndex];
-  if (!test) return null;
 
   const handleSubmit = () => {
-    if (!selectedAnswer) return;
+    if (!test || !selectedAnswer) return;
     setShowResult(true);
     const result = checkAnswer(test, selectedAnswer, uiLanguage);
     recordQuizResult(concept.id, concept.layer, result.correct);
@@ -70,6 +39,72 @@ export function SemanticQuiz({ concept }: Props) {
       setShowResult(false);
     }
   };
+
+  const handleRetry = () => {
+    setCurrentTestIndex(0);
+    setSelectedAnswer(null);
+    setShowResult(false);
+    setResults([]);
+  };
+
+  // Keyboard parity with challenge mode (issue #19): 1-4 select, Enter
+  // submits / advances. Buttons keep their native Enter behavior.
+  // NOTE: must stay above every conditional return (rules of hooks).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.target instanceof HTMLElement && e.target.tagName === 'BUTTON') return;
+      if (allAnswered) {
+        if (e.key === 'Enter' && !e.repeat) {
+          e.preventDefault();
+          handleRetry();
+        }
+        return;
+      }
+      if (!test) return;
+      if (!showResult) {
+        const idx = ['1', '2', '3', '4'].indexOf(e.key);
+        if (idx >= 0 && idx < test.options.length) {
+          e.preventDefault();
+          setSelectedAnswer(test.options[idx]);
+          return;
+        }
+        if (e.key === 'Enter' && !e.repeat && selectedAnswer) {
+          e.preventDefault();
+          handleSubmit();
+        }
+      } else if (e.key === 'Enter' && !e.repeat) {
+        e.preventDefault();
+        handleNext();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
+  if (tests.length === 0) return null;
+
+  if (allAnswered) {
+    const correctCount = results.filter(Boolean).length;
+    return (
+      <div className="semantic-quiz">
+        <h4 className="quiz-title">{zh ? '测验完成！' : 'Quiz Complete!'}</h4>
+        <div className="quiz-summary">
+          <p className="quiz-summary-score">
+            {zh ? `答对 ${correctCount}/${tests.length} 题` : `${correctCount}/${tests.length} correct`}
+          </p>
+          <div className="quiz-summary-bar">
+            <div className="quiz-summary-fill" style={{ width: `${(correctCount / tests.length) * 100}%` }} />
+          </div>
+        </div>
+        <button className="btn-primary" onClick={handleRetry}>
+          {zh ? '重新测验' : 'Retry'}
+        </button>
+      </div>
+    );
+  }
+
+  if (!test) return null;
 
   return (
     <div className="semantic-quiz">
@@ -101,10 +136,15 @@ export function SemanticQuiz({ concept }: Props) {
               onChange={() => !showResult && setSelectedAnswer(option)}
               disabled={showResult}
             />
+            <span className="quiz-option-key">{i + 1}</span>
             <code>{option}</code>
           </label>
         ))}
       </div>
+
+      {!showResult && (
+        <p className="quiz-keyboard-hint">{t('quiz_keyboard_hint', uiLanguage)}</p>
+      )}
 
       {showResult && selectedAnswer && (() => {
         const result = checkAnswer(test, selectedAnswer, uiLanguage);

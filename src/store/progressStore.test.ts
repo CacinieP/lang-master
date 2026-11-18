@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProgressStore } from './progressStore';
-import { defaultConceptProgress } from '@/types';
+import { defaultConceptProgress, defaultProfile } from '@/types';
 import type { Layer } from '@/types';
 
 function createLocalStorageMock() {
@@ -67,5 +67,28 @@ describe('progressStore', () => {
   it('unknown concepts read as unvisited with zero mastery', () => {
     expect(useProgressStore.getState().getConceptStatus('ghost')).toBe('unvisited');
     expect(useProgressStore.getState().getMasteryScore('ghost')).toBe(0);
+  });
+});
+
+// Issue #19: progress save-failure toast follows the UI language.
+describe('save-failure toast localization (issue #19)', () => {
+  it('uses the current profile language for the toast', async () => {
+    const { useUserStore } = await import('./userStore');
+    const { useUIStore } = await import('./uiStore');
+    vi.stubGlobal('localStorage', {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error('QuotaExceededError');
+      },
+      removeItem: () => {},
+      clear: () => {},
+    });
+    useUserStore.setState({ profile: { ...defaultProfile(), ui_language: 'en' } });
+    useUIStore.setState({ toasts: [] });
+    useProgressStore.getState().load(conceptLayers, totals);
+    useProgressStore.getState().recordQuizResult('alpha', 'lexical', true);
+    const toasts = useUIStore.getState().toasts;
+    expect(toasts).toHaveLength(1);
+    expect(toasts[0].text).toBe('Save failed — check browser storage');
   });
 });
