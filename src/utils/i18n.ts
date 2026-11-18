@@ -83,6 +83,7 @@ const translations: TranslationMap = {
   result_accuracy_label: { zh: '正确率', en: 'Accuracy' },
   result_correct_label: { zh: '答对', en: 'Correct' },
   result_max_streak_label: { zh: '最高连击', en: 'Max Streak' },
+  result_concepts_label: { zh: '练习概念', en: 'Concepts' },
   question_review: { zh: '逐题回顾', en: 'Question Review' },
   your_answer: { zh: '你的答案: ', en: 'Your answer: ' },
   correct_answer: { zh: '正确答案: ', en: 'Correct: ' },
