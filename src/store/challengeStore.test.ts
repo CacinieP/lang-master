@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChallengeStore } from './challengeStore';
 import { DEFAULT_CONFIG } from '@/services/challengeEngine';
 
@@ -120,5 +120,76 @@ describe('challengeStore lifecycle', () => {
     expect(s.score).toBe(0);
     expect(s.streak).toBe(0);
     expect(s.currentIndex).toBe(0);
+  });
+});
+
+// Regression for issue #3: double-submit scoring and per-question timing.
+describe('challengeStore submission guards (issue #3)', () => {
+  beforeEach(reset);
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function startCount(count: number) {
+    useChallengeStore.getState().setConfig({ mode: 'count', questionCount: count });
+    useChallengeStore.getState().startChallenge();
+  }
+
+  it('ignores a second submit for the same problem (double-click race)', () => {
+    startCount(3);
+    const p0 = useChallengeStore.getState().problems[0];
+    useChallengeStore.getState().submitAnswer(p0.test.id, p0.test.correct_answer);
+    const afterFirst = useChallengeStore.getState();
+    // Same-frame second call: UI closure still sees showingFeedback=false.
+    useChallengeStore.getState().submitAnswer(p0.test.id, p0.test.correct_answer);
+    const s = useChallengeStore.getState();
+    expect(s.answers).toHaveLength(1);
+    expect(s.score).toBe(afterFirst.score);
+    expect(s.streak).toBe(1);
+  });
+
+  it('ignores submits after the challenge finished (timeout race)', () => {
+    useChallengeStore.getState().setConfig({ mode: 'timed', timeLimit: 1 });
+    useChallengeStore.getState().startChallenge();
+    useChallengeStore.getState().tick(); // expires → finished
+    expect(useChallengeStore.getState().status).toBe('finished');
+    const p0 = useChallengeStore.getState().problems[0];
+    useChallengeStore.getState().submitAnswer(p0.test.id, p0.test.correct_answer);
+    expect(useChallengeStore.getState().answers).toEqual([]);
+    expect(useChallengeStore.getState().score).toBe(0);
+  });
+
+  it('ignores nextProblem once finished (stale auto-advance timer)', () => {
+    startCount(2);
+    const p0 = useChallengeStore.getState().problems[0];
+    useChallengeStore.getState().submitAnswer(p0.test.id, p0.test.correct_answer);
+    useChallengeStore.getState().nextProblem();
+    const p1 = useChallengeStore.getState().problems[1];
+    useChallengeStore.getState().submitAnswer(p1.test.id, p1.test.correct_answer);
+    useChallengeStore.getState().nextProblem(); // finishes
+    useChallengeStore.getState().nextProblem(); // stale timer fires again
+    const s = useChallengeStore.getState();
+    expect(s.status).toBe('finished');
+    expect(s.currentIndex).toBe(1);
+    expect(s.answers).toHaveLength(2);
+  });
+
+  it('timeMs measures per-question elapsed time, not time since challenge start', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(10_000);
+    startCount(2);
+
+    vi.setSystemTime(13_000); // 3s spent on question 1
+    const p0 = useChallengeStore.getState().problems[0];
+    useChallengeStore.getState().submitAnswer(p0.test.id, p0.test.correct_answer);
+    expect(useChallengeStore.getState().answers[0].timeMs).toBe(3_000);
+
+    vi.setSystemTime(15_000); // 2s of feedback before advancing
+    useChallengeStore.getState().nextProblem();
+
+    vi.setSystemTime(15_500); // 0.5s on question 2
+    const p1 = useChallengeStore.getState().problems[1];
+    useChallengeStore.getState().submitAnswer(p1.test.id, p1.test.correct_answer);
+    expect(useChallengeStore.getState().answers[1].timeMs).toBe(500);
   });
 });
