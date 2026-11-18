@@ -193,3 +193,13 @@
   font-size: 0.72rem;
   color: var(--text-muted);
 }
+
+.quiz-choice-note {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  background: rgba(247, 118, 142, 0.08);
+  border-left: 3px solid var(--accent-red);
+  border-radius: var(--radius-sm);
+}

@@ -6,6 +6,8 @@ export interface ValidationResult {
   feedback: string;
   /** Localized "why the correct answer is correct" (issue #12). */
   explanation: string;
+  /** Why the selected wrong option is wrong (issue #20); undefined when correct. */
+  selected_note?: string;
   /** Cross-language transfer note, when the question carries one. */
   trap_note?: string;
 }
@@ -30,5 +32,7 @@ export function checkAnswer(
     ? (test.explanation_en || test.explanation)
     : test.explanation;
 
-  return { correct: isCorrect, feedback, explanation, trap_note: test.trap_note };
+  const selected_note = isCorrect ? undefined : test.option_notes[selectedAnswer];
+
+  return { correct: isCorrect, feedback, explanation, selected_note, trap_note: test.trap_note };
 }

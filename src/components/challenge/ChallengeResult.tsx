@@ -89,6 +89,12 @@ export function ChallengeResult() {
                     <span className="review-correct-answer">{t('correct_answer', lang)}{problem?.test.correct_answer}</span>
                   </div>
                 )}
+                {!answer.correct && problem?.test.option_notes[answer.selected] && (
+                  <p className="review-choice-note">
+                    <span className="choice-note-label">{t('your_choice_label', lang)}</span>
+                    {problem.test.option_notes[answer.selected]}
+                  </p>
+                )}
                 {problem && (
                   <p className="review-explanation">
                     <span className="explanation-label">{t('explanation_label', lang)}</span>

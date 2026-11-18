@@ -29,6 +29,7 @@
 - Expression paradigm tags must match one of: procedural, oop, functional, concurrent
 - Each concept needs at least 3 language expressions and 1 semantic test
 - Each semantic test needs a non-empty `explanation` (zh); `explanation_en` recommended
+- Each semantic test needs `option_notes` covering exactly its wrong options (zh)
 
 ## Commands
 - `npm run dev` — Start dev server

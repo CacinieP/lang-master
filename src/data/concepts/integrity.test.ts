@@ -111,6 +111,14 @@ describe('concept data integrity', () => {
       if (t.explanation_en !== undefined) {
         expect(t.explanation_en.trim().length, `${t.id}: explanation_en`).toBeGreaterThan(0);
       }
+      // Issue #20: every wrong option needs a rationale, and only wrong options.
+      const wrongOptions = t.options.filter((o) => o !== t.correct_answer);
+      expect(Object.keys(t.option_notes).sort(), `${t.id}: option_notes keys`).toEqual(
+        [...wrongOptions].sort(),
+      );
+      for (const note of Object.values(t.option_notes)) {
+        expect(note.trim().length, `${t.id}: option note must be non-empty`).toBeGreaterThan(0);
+      }
     }
   });
 });
