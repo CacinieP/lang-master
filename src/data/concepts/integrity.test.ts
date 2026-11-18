@@ -22,6 +22,15 @@ describe('concept data integrity', () => {
     }
   });
 
+  it('has a 120-question bank: 5 tests per concept with unique ids (issue #13)', () => {
+    for (const c of CONCEPT_NODES) {
+      expect(c.semantic_tests.length, `${c.id}: question count`).toBe(5);
+    }
+    const all = CONCEPT_NODES.flatMap((c) => c.semantic_tests);
+    expect(all).toHaveLength(120);
+    expect(new Set(all.map((t) => t.id)).size, 'test ids must be unique').toBe(120);
+  });
+
   it.each(CONCEPT_NODES.map((c) => [c.id, c] as const))('%s: core fields', (_id, c) => {
     expect(LAYERS).toContain(c.layer);
     expect(c.layer_position).toBeGreaterThanOrEqual(1);

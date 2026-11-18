@@ -24,7 +24,7 @@
 - C7: No privileged language — random display order
 
 ## Data Model
-- Alpha: 4 languages (python, c, java, rust), 24 concepts (P1-P3)
+- Alpha: 4 languages (python, c, java, rust), 24 concepts (P1-P3), 120 semantic tests (5 per concept)
 - Trap keys format: `{source}_to_{target}` (e.g., `python_to_rust`)
 - Expression paradigm tags must match one of: procedural, oop, functional, concurrent
 - Each concept needs at least 3 language expressions and 1 semantic test
