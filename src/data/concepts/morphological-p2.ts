@@ -123,6 +123,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '需正确应用优先级：b*c=12, d%e=1, a+12-1=11',
         explanation: '优先级：* 与 % 高于 + 与 -。b*c=12、d%e=1，故 a+12-1=11。',
         explanation_en: 'Precedence: * and % bind tighter than + and -: b*c=12, d%e=1, so 2+12-1=11.',
+        option_notes: {
+          '9': '把 d%e 误算为 5；5%2=1',
+          '12': '只算了 b*c=12，漏掉 a 与 d%e',
+          '13': '取余或优先级算错；正确 2+12-1=11',
+        },
       },
       {
         id: 'expr_basic_02',
@@ -136,6 +141,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'C 整数除法截断：a%b=1, a/b=3, 1+3=4',
         explanation: '% 与 / 同级且高于 +：10%3=1、10/3=3（整数截断），1+3=4。',
         explanation_en: '% and / share precedence above +: 10%3=1, 10/3=3 (truncated), so 1+3=4.',
+        option_notes: {
+          '3': '只算了 a/b=3，漏掉 a%b=1',
+          '5': '误把 10/3 当 3.33；整数除法得 3',
+          '4.33': 'int 运算不产生小数',
+        },
       },
       {
         id: 'expr_basic_03',
@@ -148,6 +158,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         difficulty: 2,
         explanation: '* 优先于 +，a + (b * c) 用括号显式标注了默认优先级；(a+b)*c 则改变了求值顺序。',
         explanation_en: '* binds tighter than +; a + (b * c) makes the default precedence explicit, while (a+b)*c changes the order.',
+        option_notes: {
+          'let result = (a + b) * c;': '先加后乘，改变了优先级',
+          'let result = a + b * c;': '等价但没有显式标注优先级，不符题意',
+          'let result = (a + b) * (c);': '同样先加后乘',
+        },
       },
       {
         id: 'expr_basic_04',
@@ -161,6 +176,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '+ 从左到右结合：先字符串拼接，后续数字也变拼接',
         explanation: '+ 左结合：先 "a" + 1 = "a1"，再 "a1" + 2 = "a12"；若想要 "a3" 需写 "a" + (1 + 2)。',
         explanation_en: '+ is left-associative: "a"+1 gives "a1", then +2 gives "a12"; "a3" would need "a" + (1 + 2).',
+        option_notes: {
+          '"a3"': '那是 "a"+(1+2)；+ 左结合先拼 "a1"',
+          '编译错误': '字符串 + 数字在 Java 中合法',
+          '"12a"': '顺序反了，从 "a" 开始拼',
+        },
       },
       {
         id: 'expr_basic_05',
@@ -174,6 +194,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '同级运算符从左到右：先截断除法再乘法，精度已经丢失',
         explanation: '/ 与 * 同级且左结合：7/2=3（截断），3*2=6；数学上的 7/2*2=7 在整数运算中不成立。',
         explanation_en: '/ and * share precedence and associate left: 7/2=3 (truncated), 3*2=6 — the mathematical 7 is lost.',
+        option_notes: {
+          '7': '数学上成立，但 7/2 先截断为 3',
+          '8': '误把 7/2 四舍五入成 4；C 截断得 3',
+          '6.0': 'int 运算结果是 int 6',
+        },
       },
     ],
   },
@@ -300,6 +325,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'sqrt(9+16)=sqrt(25)=5.0，注意返回值是 double 类型',
         explanation: 'pow(3,2)=9.0、pow(4,2)=16.0，sqrt(25.0)=5.0；Math 库全程 double，返回 5.0 而非整型 5。',
         explanation_en: 'pow gives 9.0 and 16.0; sqrt(25.0)=5.0 — the Math API is double throughout, not int.',
+        option_notes: {
+          '5': 'Math.sqrt 返回 double，应写 5.0',
+          '25.0': '那是 sqrt 内部的 9+16，还没开方',
+          '7.0': '那是 3+4，不是 sqrt(25)',
+        },
       },
       {
         id: 'func_call_02',
@@ -313,6 +343,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Rust 使用 f64::关联函数语法而非裸函数名或 Math 类',
         explanation: 'Rust 标准库没有裸 sqrt 函数也没有 Math 类；f64::sqrt 是关联函数调用，表达式后面不能接 ::。',
         explanation_en: 'Rust has no free sqrt function or Math class; f64::sqrt is the associated-function call, and :: cannot follow an expression.',
+        option_notes: {
+          'let result = sqrt(x * x + y * y);': 'Rust 没有裸 sqrt 函数',
+          'let result = Math.sqrt(x * x + y * y);': 'Rust 没有 Math 类',
+          'let result = (x * x + y * y)::sqrt();': ':: 不能跟在表达式后',
+        },
       },
       {
         id: 'func_call_03',
@@ -326,6 +361,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'C 的 sqrt 返回 double，即使参数看起来像整数也是 double',
         explanation: 'math.h 中 sqrt 的原型是 double sqrt(double)，参数与返回值都是 double。',
         explanation_en: 'math.h declares double sqrt(double) — both argument and result are double.',
+        option_notes: {
+          'int': 'sqrt 原型是 double sqrt(double)',
+          'float': 'sqrtf 才返回 float',
+          'long': 'long 是整型，与开方无关',
+        },
       },
       {
         id: 'func_call_04',
@@ -339,6 +379,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'print 是过程（副作用），不是有返回值的函数',
         explanation: 'print 只产生输出副作用，返回 None；把它的「结果」赋值得到的是 None。',
         explanation_en: 'print only produces output as a side effect and returns None.',
+        option_notes: {
+          '0': 'print 返回 None，不是 0',
+          '"hi"': '那是打印内容，不是返回值',
+          '报错': '赋值 print 的返回值合法',
+        },
       },
       {
         id: 'func_call_05',
@@ -352,6 +397,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Java 基本类型按值传递，形参修改不影响实参',
         explanation: 'Java 基本类型按值传递：f 收到 a 的副本，修改 x 不影响 a，a 仍为 1。',
         explanation_en: 'Java passes primitives by value: f receives a copy, so mutating x leaves a unchanged at 1.',
+        option_notes: {
+          '0': 'a 初始化为 1 且未被修改',
+          '9': '按值传递：f 改的是副本，不影响 a',
+          '编译错误': '代码完全合法',
+        },
       },
     ],
   },
@@ -473,6 +523,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'C 的 int 通常是 32 位有符号整数，对应 Rust 的 i32',
         explanation: 'C 的 int 在主流平台是 32 位有符号整数，对应 i32；u32 无符号、i64 位宽翻倍，int 不是 Rust 类型名。',
         explanation_en: 'C int is a 32-bit signed integer on mainstream platforms, matching i32; u32 is unsigned and i64 is wider.',
+        option_notes: {
+          'let x: int = 42;': 'int 不是 Rust 类型名',
+          'let x: u32 = 42;': 'u32 无符号，C int 有符号',
+          'let x: i64 = 42;': 'i64 是 64 位，C int 通常 32 位',
+        },
       },
       {
         id: 'type_annot_02',
@@ -486,6 +541,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Python 的类型标注不强制检查，x 实际仍是 str 类型',
         explanation: 'Python 的类型标注只是元数据，运行时不做检查：x 绑定到字符串对象，实际类型仍是 str。',
         explanation_en: 'Python annotations are metadata, not runtime checks: x binds to a string object and remains a str.',
+        option_notes: {
+          'int': '标注不强制，x 绑定的是字符串',
+          'TypeError': '运行时不检查标注',
+          'None': 'x 有值 "hello"，不是 None',
+        },
       },
       {
         id: 'type_annot_03',
@@ -499,6 +559,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Java 的 String 是堆分配的对象，对应 Rust 的 String（而非 &str 切片引用）',
         explanation: 'Java String 是堆上对象，对应拥有所有权的 Rust String；&str 是借用切片，裸 str 是未定长类型不能直接作变量类型。',
         explanation_en: 'Java String is a heap object, matching owned Rust String; &str is a borrowed slice and bare str is unsized.',
+        option_notes: {
+          'let name: &str = "hello";': '&str 是借用切片，不拥有堆数据',
+          'let name: str = "hello";': 'str 未定长，不能直接作变量类型',
+          'let name: String = "hello";': '字面量是 &str，需 String::from 转换',
+        },
       },
       {
         id: 'type_annot_04',
@@ -512,6 +577,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'parse 是泛型方法，目标类型必须可推断',
         explanation: 'parse::<T>() 的 T 无法从上下文推断时报「type annotations needed」；需 let x: i32 = ... 或 "5".parse::<i32>()。',
         explanation_en: 'parse::<T>() needs an inferable target type; otherwise "type annotations needed". Use let x: i32 or parse::<i32>().',
+        option_notes: {
+          'i32': '目标类型无法推断，编译失败而非默认 i32',
+          'String': 'parse 是从字符串解析，不会得 String',
+          '&str': '类型不可推断即报错',
+        },
       },
       {
         id: 'type_annot_05',
@@ -525,6 +595,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'var 只能用于局部变量，不能用于字段',
         explanation: 'Java 的 var 仅限局部变量类型推断；字段必须显式声明类型，class A { var x = 1; } 编译错误。',
         explanation_en: 'Java var is limited to local variables; fields need explicit types, so this fails to compile.',
+        option_notes: {
+          '合法，推断为 int': 'var 只能用于局部变量，字段须显式类型',
+          '合法，推断为 Integer': '字段不允许 var',
+          '合法但有警告': '这是编译错误',
+        },
       },
     ],
   },
@@ -650,6 +725,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'C 的浮点到整数转换截断小数部分，不四舍五入',
         explanation: '浮点转整型向零截断：(int)3.7=3，不四舍五入；同理 (int)-3.7 得 -3。',
         explanation_en: 'Float-to-int truncates toward zero: (int)3.7=3 with no rounding; likewise (int)-3.7 gives -3.',
+        option_notes: {
+          '0': '截断保留整数部分 3',
+          '4': '截断不是四舍五入',
+          '3.7': '(int) 后是整型，小数丢失',
+        },
       },
       {
         id: 'type_cast_02',
@@ -663,6 +743,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Rust 用 as 关键字而非 C 的括号语法做类型转换',
         explanation: 'Rust 用 as 关键字做显式数值转换：3.7 as i32；C 风格括号转换与 int() 函数写法在 Rust 中都不存在。',
         explanation_en: 'Rust casts with the `as` keyword: 3.7 as i32; C-style casts and int() calls do not exist in Rust.',
+        option_notes: {
+          '(i32)3.7': 'C 风格括号转换在 Rust 不合法',
+          'int(3.7)': 'Rust 没有 int() 转换函数',
+          'i32::from(3.7)': 'From 不支持浮点→整型，编译错误',
+        },
       },
       {
         id: 'type_cast_03',
@@ -675,6 +760,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         difficulty: 2,
         explanation: 'Integer.toString 把整数转换为十进制字符串 "42"——这是类型转换（int → String），不是数值运算。',
         explanation_en: 'Integer.toString converts the integer to the decimal string "42" — a type conversion, not arithmetic.',
+        option_notes: {
+          '42': '返回字符串 "42"，不是整数',
+          '"0x2A"': 'toString 默认十进制',
+          '"forty-two"': '转换的是数字字符串，不是英文',
+        },
       },
       {
         id: 'type_cast_04',
@@ -688,6 +778,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'C 允许隐式浮点转整型（截断），Java 的窄化转换必须显式',
         explanation: 'double → int 是窄化转换，Java 要求显式 (int)3.7；C 会隐式截断，Java 在编译期拒绝。',
         explanation_en: 'double to int is a narrowing conversion requiring an explicit (int) cast in Java; C would truncate implicitly.',
+        option_notes: {
+          '3': 'Java 不允许隐式窄化，编译失败',
+          '4': '编译失败，且 Java 不四舍五入',
+          '3.7': 'int 不能存小数，编译期拒绝',
+        },
       },
       {
         id: 'type_cast_05',
@@ -701,6 +796,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'as 转换不做溢出检查，超出位宽按模截断',
         explanation: 'as 是 unchecked 转换：300 超出 u8 范围，按模 256 截断得 44（300 - 256）；需要检查时用 try_into。',
         explanation_en: 'as is unchecked: 300 wraps modulo 256 to 44; use try_into when overflow must be detected.',
+        option_notes: {
+          '255': 'as 按模 256 截断得 44，不是饱和',
+          '编译错误': 'as 转换编译期合法',
+          '运行时 panic': 'as 不检查溢出；try_into 才报错',
+        },
       },
     ],
   },
@@ -820,6 +920,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         difficulty: 2,
         explanation: 'format! 宏用 {} 占位符插值，等价 f-string；Rust 没有 f 前缀字符串，+ 也不能直接拼接整数。',
         explanation_en: 'format! interpolates via {} placeholders like f-strings; Rust has no f-prefix strings and + cannot append integers directly.',
+        option_notes: {
+          'f"Value: {x}"': 'Rust 没有 f 前缀字符串',
+          '"Value: " + x': 'String + 整数不合法',
+          'printf!("Value: %d", x)': 'Rust 没有 printf! 宏',
+        },
       },
       {
         id: 'str_interp_02',
@@ -832,6 +937,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         difficulty: 2,
         explanation: 'String.format 沿用 C printf 的 %d 占位符机制；"Age: %d" + age 只会把 %d 当字面文本拼接，输出错误。',
         explanation_en: 'String.format keeps printf\'s %d mechanism; concatenating "Age: %d" + age would leave %d as literal text.',
+        option_notes: {
+          '"Age: %d" + age': '%d 被当字面文本，不会替换',
+          'f"Age: {age}"': 'f-string 是 Python 语法',
+          'format!("Age: {}", age)': 'format! 是 Rust 宏',
+        },
       },
       {
         id: 'str_interp_03',
@@ -845,6 +955,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'f-string 花括号内可计算表达式',
         explanation: 'f-string 花括号内是表达式：先求值 2+3=5，再把结果插入字符串。',
         explanation_en: 'Braces in f-strings hold expressions: 2+3 evaluates to 5 before being inserted.',
+        option_notes: {
+          '"Result: 2 + 3"': '花括号内会求值，不是原样文本',
+          '"Result: {2+3}"': 'f-string 花括号不会保留',
+          'TypeError': '整数表达式可正常插入',
+        },
       },
       {
         id: 'str_interp_04',
@@ -858,6 +973,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'C 没有字符串 + 运算符，相邻字面量在翻译阶段自动拼接',
         explanation: 'C 的相邻字符串字面量在编译期拼接为一个 "Hello, world"——这是 C 拆分长字符串的惯用法。',
         explanation_en: 'Adjacent C string literals concatenate at compile time into "Hello, world" — the idiom for splitting long strings.',
+        option_notes: {
+          '编译错误': '相邻字面量拼接是合法 C 语法',
+          '运行时拼接': '拼接发生在编译期',
+          '两个独立的字符串': '它们合并为一个字面量',
+        },
       },
       {
         id: 'str_interp_05',
@@ -871,6 +991,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '编号占位符可重复引用同一参数',
         explanation: '{0} 引用第 0 个参数，两个 {0} 都替换为 5，得到 "5-5"。',
         explanation_en: '{0} refers to argument 0; both placeholders substitute 5, giving "5-5".',
+        option_notes: {
+          '"5-0"': '{0} 是参数索引，不是字面 0',
+          '编译错误': '编号占位符合法',
+          '"{0}-{0}"': '占位符会被替换',
+        },
       },
     ],
   },
@@ -989,6 +1114,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Python 列表是动态数组，对应 Rust 的 Vec 而非固定数组',
         explanation: 'Python 列表可动态增长，对应堆分配的 Vec（vec! 宏创建）；[i32; 3] 是定长数组，长度不可变。',
         explanation_en: 'Python lists grow dynamically, matching heap-allocated Vec (via vec!); [i32; 3] is a fixed-length array.',
+        option_notes: {
+          'let nums = [1, 2, 3];': '定长数组 [i32; 3]，不能动态增长',
+          'let nums: [i32; 3] = [1, 2, 3];': '同样是定长数组',
+          'let nums = Vec::new();': '创建的是空 Vec，没有元素',
+        },
       },
       {
         id: 'arr_lit_02',
@@ -1001,6 +1131,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         difficulty: 2,
         explanation: 'C 数组初始化用花括号 {1, 2, 3}；方括号是 Rust/Python 风格，圆括号 (1, 2, 3) 是逗号表达式。',
         explanation_en: 'C array initializers use braces {1, 2, 3}; brackets are Rust/Python style and parens form a comma expression.',
+        option_notes: {
+          'int nums[] = [1, 2, 3];': '方括号初始化不是 C 语法',
+          'int* nums = {1, 2, 3};': '指针不能用初始化列表直接初始化',
+          'int nums[3] = (1, 2, 3);': '圆括号是逗号表达式，值为 3',
+        },
       },
       {
         id: 'arr_lit_03',
@@ -1013,6 +1148,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         difficulty: 2,
         explanation: '[i32; 3] 中的 3 是元素个数，且是类型的一部分：[i32; 3] 与 [i32; 4] 属于不同类型。',
         explanation_en: 'The 3 in [i32; 3] is the element count and part of the type: [i32; 3] and [i32; 4] are distinct types.',
+        option_notes: {
+          '数组字节大小': '字节大小是 3×4=12；3 是元素个数',
+          '类型版本号': '无此概念',
+          '最大索引值': '最大索引是 2（个数减一）',
+        },
       },
       {
         id: 'arr_lit_04',
@@ -1026,6 +1166,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Python 列表可 append，Java 数组定长且运行时检查边界',
         explanation: 'Java 数组长度固定，a[3] 越界在运行时抛 ArrayIndexOutOfBoundsException；动态增长要用 ArrayList。',
         explanation_en: 'Java arrays are fixed-length; a[3] throws ArrayIndexOutOfBoundsException at runtime. Use ArrayList to grow.',
+        option_notes: {
+          '自动扩容为 4 个元素': 'Java 数组定长，扩容用 ArrayList',
+          '编译错误': '越界是运行时检查',
+          '静默忽略': 'JVM 抛 ArrayIndexOutOfBoundsException',
+        },
       },
       {
         id: 'arr_lit_05',
@@ -1039,6 +1184,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '[值; 个数] 是重复初始化语法，不是范围',
         explanation: '[0; 5] 是重复初始化：把 0 复制 5 份，得到 [0, 0, 0, 0, 0]；范围写法是 0..5。',
         explanation_en: '[0; 5] is repeat-initialization: five copies of 0. A range would be written 0..5.',
+        option_notes: {
+          '0 到 5 的数组': '范围写法是 0..5，那是迭代器',
+          '编译错误': '[值; 个数] 是合法重复初始化',
+          '含 0 和 5 两个元素的数组': '分号后是重复次数，不是第二个元素',
+        },
       },
     ],
   },
@@ -1165,6 +1315,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '指针访问结构体成员用 -> 而非 .',
         explanation: '-> 是通过指针访问成员的运算符，等价 (*ptr).x；. 用于结构体值本身，*ptr.x 会先解析成 *(ptr.x) 而出错。',
         explanation_en: '-> accesses a member through a pointer, i.e. (*ptr).x; . works on struct values, and *ptr.x misparses as *(ptr.x).',
+        option_notes: {
+          'ptr.x': '. 用于结构体值，ptr 是指针',
+          'ptr::x': ':: 是 Rust 语法，C 没有',
+          '*ptr.x': '解析为 *(ptr.x)，对指针取 . 成员非法',
+        },
       },
       {
         id: 'member_acc_02',
@@ -1178,6 +1333,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '关联函数用 :: 而非 . 调用',
         explanation: ':: 用于访问类型/模块的关联项（关联函数、常量）；. 用于值的方法调用——f64 是类型而非值。',
         explanation_en: ':: reaches associated items on types/modules; . calls methods on values — f64 is a type, not a value.',
+        option_notes: {
+          'f64.sqrt(16.0)': '. 用于值的方法，f64 是类型',
+          'sqrt.f64(16.0)': '语法颠倒，无此写法',
+          'Math.sqrt(16.0)': 'Rust 没有 Math 类',
+        },
       },
       {
         id: 'member_acc_03',
@@ -1191,6 +1351,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Java 习惯用 getter 方法而非直接字段访问',
         explanation: 'private 字段禁止外部直接访问，Java 惯例通过公开 getter 读取——封装让内部表示可以自由演化。',
         explanation_en: 'Private fields forbid direct external access; public getters are the convention, keeping internals free to evolve.',
+        option_notes: {
+          'person.name': 'private 字段禁止外部直接访问',
+          'person->name': '-> 是 C/C++ 指针语法',
+          'person::name': ':: 不用于实例字段访问',
+        },
       },
       {
         id: 'member_acc_04',
@@ -1204,6 +1369,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Rust 方法调用自动取引用/解引用，无需手动 &',
         explanation: '方法调用语法会自动引用/解引用接收者：len 的签名是 &self，s.len() 自动借用 s，无需手动写 &s。',
         explanation_en: 'Method call syntax auto-refs the receiver: len takes &self, so s.len() borrows s automatically.',
+        option_notes: {
+          '必须写 (&s).len()': '方法调用自动借用，无需手动 &',
+          '转移所有权': 'len 签名是 &self，不消费 s',
+          '编译错误': 's.len() 是标准写法',
+        },
       },
       {
         id: 'member_acc_05',
@@ -1217,6 +1387,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Java 用 s.length()，Rust 用 s.len()，Python 用内置函数 len(s)',
         explanation: 'Python 用内置函数 len(s)（背后调用 __len__ 协议）；s.length() 是 Java 风格，s.len() 是 Rust 风格。',
         explanation_en: 'Python uses the builtin len(s) (the __len__ protocol); s.length() is Java-style and s.len() is Rust-style.',
+        option_notes: {
+          's.length()': 'Java 风格，Python 字符串无此方法',
+          's.len()': 'Rust 风格',
+          'length(s)': 'Python 没有 length 内置函数',
+        },
       },
     ],
   },
@@ -1342,6 +1517,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '乘法优先级高于加法：b*c=12, a+12=14',
         explanation: '乘法优先于加法：2 + 3*4 = 2+12 = 14；若从左到右计算会错得 20。',
         explanation_en: 'Multiplication precedes addition: 2 + 3*4 = 14; left-to-right evaluation would wrongly give 20.',
+        option_notes: {
+          '9': '把乘法当加法 2+3+4',
+          '20': '先加后乘 (2+3)*4 的错误顺序',
+          '24': '把加法当乘法 2*3*4',
+        },
       },
       {
         id: 'op_prec_02',
@@ -1355,6 +1535,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '优先级：not > 比较运算符 > and > or。not(x>y)=not(True)=False, False or (y>0)=True',
         explanation: '优先级：比较 > not > and > or。x>y 为 True，not True=False；y>0 为 True，False or True=True。',
         explanation_en: 'Precedence: comparison > not > and > or. not(5>3)=False; False or (3>0)=True.',
+        option_notes: {
+          '1': 'or 返回操作数 True，不是整数 1',
+          'False': 'not(x>y)=False，但 False or True=True',
+          'TypeError': '布尔运算合法',
+        },
       },
       {
         id: 'op_prec_03',
@@ -1368,6 +1553,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Python 用 not/and/or 对应 C 的 !/&&/||，优先级层级不同但此表达式等价',
         explanation: 'not/and 对应 !/&&，且 not 优先于 and，与 C 中 ! 优先于 && 一致，两式逻辑等价。',
         explanation_en: 'not/and map to !/&& with the same relative precedence, so the two expressions are logically equivalent.',
+        option_notes: {
+          '!a && b': '那是 C 语法，Python 不识别',
+          'not (a and b)': '否定范围扩大到整个合取，语义不同',
+          'a not and b': 'not 是前置运算符，语法错误',
+        },
       },
       {
         id: 'op_prec_04',
@@ -1381,6 +1571,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: '= 是赋值（表达式值为 0），== 才是比较——经典 C 陷阱',
         explanation: 'if (x = 0) 是赋值：把 0 赋给 x，表达式值为 0（假），走 else 输出 no；比较应写 x == 0。',
         explanation_en: 'if (x = 0) assigns 0 to x; the expression evaluates to 0 (false), printing no. Comparison needs ==.',
+        option_notes: {
+          'yes': 'x=0 是赋值，表达式值为 0（假）',
+          '编译错误': '赋值作条件在 C 中合法',
+          '无输出': 'else 分支会打印 no',
+        },
       },
       {
         id: 'op_prec_05',
@@ -1394,6 +1589,11 @@ export const morphologicalP2Concepts: ConceptNode[] = [
         trap_note: 'Python 支持链式比较；C 会算成 (3>2)>1 即 1>1 为假',
         explanation: 'Python 链式比较等价于 3 > 2 and 2 > 1，为 True；C 中 (3>2)>1 = 1>1 为假——同形不同义。',
         explanation_en: 'Python chains comparisons as 3>2 and 2>1 → True; C computes (3>2)>1 = 1>1 → false.',
+        option_notes: {
+          '1': '比较结果是布尔 True',
+          'False': '那是 C 的 (3>2)>1 结果；Python 链式比较为 True',
+          'TypeError': '链式比较是合法语法',
+        },
       },
     ],
   },

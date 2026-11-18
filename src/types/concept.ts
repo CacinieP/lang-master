@@ -74,6 +74,8 @@ export interface SemanticTest {
   /** Why the correct answer is correct (zh). Required — every answer must be explainable. */
   explanation: string;
   explanation_en?: string;
+  /** Why each WRONG option is wrong (zh), keyed by option text (issue #20). */
+  option_notes: Record<string, string>;
   sandbox_required?: boolean;
 }
 

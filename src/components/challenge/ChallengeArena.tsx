@@ -144,6 +144,12 @@ export function ChallengeArena() {
               <span className="explanation-label">{t('explanation_label', lang)}</span>
               {explanation}
             </p>
+            {!lastAnswer?.correct && selected && problem.test.option_notes[selected] && (
+              <p className="feedback-choice-note">
+                <span className="choice-note-label">{t('your_choice_label', lang)}</span>
+                {problem.test.option_notes[selected]}
+              </p>
+            )}
             {problem.test.trap_note && (
               <p className="feedback-trap-note">{problem.test.trap_note}</p>
             )}

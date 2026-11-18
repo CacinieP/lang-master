@@ -158,6 +158,11 @@ let grade = if score >= 90 {
         trap_note: 'Rust if 是表达式，可直接赋值；score=75 满足 else 分支。',
         explanation: 'Rust 的 if 是表达式，可直接赋值；75 不满足 >=90 也不满足 >=80，落入 else 分支得 "C"。',
         explanation_en: 'Rust if is an expression and can be assigned; 75 matches neither >=90 nor >=80, so the else branch yields "C".',
+        option_notes: {
+          '"A"': '75 不满足 >=90',
+          '"B"': '75 也不满足 >=80',
+          '编译错误': 'if 表达式合法，分支类型一致',
+        },
       },
       {
         id: 'cf_cond_02',
@@ -170,6 +175,11 @@ let grade = if score >= 90 {
         trap_note: 'C 中 0 为假，非零为真。Java 开发者可能误以为编译错误。',
         explanation: 'C 按数值判真假：0 为假走 else 输出 no；Java 要求条件是 boolean，int 作条件会编译错误——典型跨语言陷阱。',
         explanation_en: 'C treats 0 as false, taking the else branch; Java would reject an int condition — a classic cross-language trap.',
+        option_notes: {
+          'yes': 'x=0 在 C 中为假',
+          '编译错误': 'int 作条件在 C 中合法',
+          '无输出': 'else 分支打印 no',
+        },
       },
       {
         id: 'cf_cond_03',
@@ -187,6 +197,11 @@ let grade = if score >= 90 {
         trap_note: 'Rust 没有三元运算符，if 表达式是等价替代；match 的模式不能写成 >= 90 这样的比较表达式。',
         explanation: 'Rust 没有 ?: 三元运算符，if/else 表达式直接承担该角色；match 的模式位置不能写 >= 90 这样的比较表达式。',
         explanation_en: 'Rust has no ?: operator; if/else expressions fill that role, and match patterns cannot be comparisons like >= 90.',
+        option_notes: {
+          'let grade = score >= 90 ? "A" : "B";': 'Rust 没有三元运算符',
+          'if score >= 90 { let grade = "A"; } else { let grade = "B"; }': '分支内 let 的作用域限于块内，外部不可见',
+          'let grade = match score { >= 90 => "A", _ => "B" };': 'match 模式不能写比较表达式',
+        },
       },
       {
         id: 'cf_cond_04',
@@ -200,6 +215,11 @@ let grade = if score >= 90 {
         trap_note: 'if 是表达式，各分支必须类型一致',
         explanation: 'if 表达式的两个分支类型不同（i32 与 &str），无法统一为单一类型，编译错误。',
         explanation_en: 'The two if-expression branches have different types (i32 vs &str) and cannot unify — compile error.',
+        option_notes: {
+          '1': '分支类型不一致（i32 vs &str），编译失败',
+          '"one"': 'if 表达式必须统一类型',
+          '()': '有分支返回值时不会退化为 ()',
+        },
       },
       {
         id: 'cf_cond_05',
@@ -213,6 +233,11 @@ let grade = if score >= 90 {
         trap_note: 'Python 空容器为假（truthiness），C/Java 没有这种隐式转换',
         explanation: 'Python 的真值规则：空列表、空字符串、0、None 都为假，if [] 走 else 输出 no。',
         explanation_en: 'Python truthiness: empty lists, empty strings, 0 and None are falsy, so if [] takes the else branch.',
+        option_notes: {
+          'yes': '空列表为假，走 else',
+          '报错': '空列表作条件合法',
+          '无输出': 'else 分支打印 no',
+        },
       },
     ],
   },
@@ -348,6 +373,11 @@ for (int n : nums) {
         trap_note: 'range(3) 是半开区间 [0,3)，输出 0,1,2。',
         explanation: 'range(3) 是半开区间 [0,3)，逐个产出 0、1、2。',
         explanation_en: 'range(3) is the half-open interval [0,3), yielding 0, 1, 2.',
+        option_notes: {
+          '1 2 3': 'range(3) 从 0 开始',
+          '0 1 2 3': '半开区间不含 3',
+          '1 2': '起点 0、终点 3（不含），共 3 个值',
+        },
       },
       {
         id: 'cf_for_02',
@@ -360,6 +390,11 @@ for (int n : nums) {
         trap_note: '0..3 是半开区间 [0,3)，与 range(3) 一致。',
         explanation: '0..3 与 range(3) 同为半开区间，依次输出 0、1、2。',
         explanation_en: '0..3 is half-open just like range(3): prints 0, 1, 2.',
+        option_notes: {
+          '1 2 3': '0..3 从 0 开始',
+          '0 1 2 3': '0..3 右开不含 3',
+          '1 2': '漏了 0，范围是 [0,3)',
+        },
       },
       {
         id: 'cf_for_03',
@@ -377,6 +412,11 @@ for (int n : nums) {
         trap_note: 'range(5) 生成 0..4；range(1,5) 从 1 开始，缺少 0，不等价。',
         explanation: 'C 循环 i=0 起、i<5 止、步长 1，正是 range(5)；range(1,5) 从 1 开始，缺少 0。',
         explanation_en: 'i=0; i<5; i++ is exactly range(5); range(1,5) starts at 1 and misses 0.',
+        option_notes: {
+          'for i in range(1, 5)': '从 1 开始，缺少 0',
+          'for (i = 0; i < 5; i++)': 'C 语法不能用在 Python',
+          'while i < 5: i += 1': 'i 未初始化，且不等价于 range 自动迭代',
+        },
       },
       {
         id: 'cf_for_04',
@@ -390,6 +430,11 @@ for (int n : nums) {
         trap_note: 'enumerate 从 0 开始产出 (索引, 元素) 对',
         explanation: 'enumerate 产出 (0,\'a\')、(1,\'b\')，解包后逐行输出 0 a 与 1 b。',
         explanation_en: 'enumerate yields (0,\'a\') and (1,\'b\'); unpacked, it prints 0 a then 1 b.',
+        option_notes: {
+          '1 a 2 b': 'enumerate 默认从 0 开始',
+          'a b': '漏了索引 i',
+          '0 ab': 'c 逐字符取 a、b，不是整串',
+        },
       },
       {
         id: 'cf_for_05',
@@ -403,6 +448,11 @@ for (int n : nums) {
         trap_note: 'rev() 反转迭代器，但范围本身仍是半开的',
         explanation: '0..3 产出 0,1,2，.rev() 反转迭代顺序为 2,1,0；右端点 3 本来就不在范围内。',
         explanation_en: '0..3 yields 0,1,2 and .rev() reverses the order to 2,1,0; 3 was never in the range.',
+        option_notes: {
+          '0, 1, 2': '那是未反转的顺序',
+          '3, 2, 1': '0..3 不含 3，反转后从 2 开始',
+          '编译错误': '.rev() 是合法迭代器适配器',
+        },
       },
     ],
   },
@@ -538,6 +588,11 @@ while count < 5 {
         difficulty: 3,
         explanation: 'while 先判断后执行：count 为 0、1、2 时打印，count=3 时条件为假退出。',
         explanation_en: 'while checks before running: prints at count 0, 1, 2 and exits when count reaches 3.',
+        option_notes: {
+          '0': '循环执行 3 次，不只 1 次',
+          '1 2 3': '先打印后自增，从 0 开始',
+          '0 1 2 3': 'count=3 时条件为假，不打印',
+        },
       },
       {
         id: 'cf_while_02',
@@ -550,6 +605,11 @@ while count < 5 {
         trap_note: '循环在 count=3 时条件为假退出，最终值为 3。',
         explanation: '循环体把 count 加到 3 后条件 count<3 为假退出——退出时 count 已经是 3。',
         explanation_en: 'The body increments count to 3, then the condition fails — count ends at 3.',
+        option_notes: {
+          '2': 'count=2 时条件仍真，会再加一次',
+          '4': 'count=3 时条件已假',
+          '编译错误': 'mut 绑定上的 while 合法',
+        },
       },
       {
         id: 'cf_while_03',
@@ -567,6 +627,11 @@ while count < 5 {
         trap_note: 'do-while 保证至少执行一次，while True + break 模拟此语义。',
         explanation: 'do-while 先执行后判断，至少执行一次；while True + 末尾条件 break 精确模拟该语义，while not cond 把条件反了。',
         explanation_en: 'do-while runs before checking (at least once); while True + a trailing conditional break models it exactly.',
+        option_notes: {
+          'while cond:\n    action()': '先判断后执行，cond 初始假时一次也不执行',
+          'for _ in range(1):\n    action()': '只执行一次，不循环',
+          'while not cond:\n    action()': '条件反了，语义相反',
+        },
       },
       {
         id: 'cf_while_04',
@@ -580,6 +645,11 @@ while count < 5 {
         trap_note: 'while 先判断后执行，条件恒假则循环体一次也不执行',
         explanation: 'while (0) 条件恒假，循环体一次也不执行，i 保持 0；对比 do-while 至少执行一次。',
         explanation_en: 'while (0) is always false, so the body never runs and i stays 0; do-while would run once.',
+        option_notes: {
+          '1': 'while(0) 恒假，循环体不执行',
+          '编译错误': 'while(0) 合法',
+          '无限循环': '条件恒假，一次也不循环',
+        },
       },
       {
         id: 'cf_while_05',
@@ -593,6 +663,11 @@ while count < 5 {
         trap_note: 'for/while 的 else 在循环「正常走完」（无 break）时执行',
         explanation: 'Python 循环的 else 子句在没有 break 中断、正常耗尽时执行；这里循环走完，输出 done。',
         explanation_en: 'A loop else clause runs when the loop completes without break; here it finishes, printing done.',
+        option_notes: {
+          '无输出': '循环正常走完（无 break），else 会执行',
+          '报错': 'for-else 是合法语法',
+          '0 1 2': '循环体是 pass，不打印 i',
+        },
       },
     ],
   },
@@ -741,6 +816,11 @@ let result = greet("World");`,
         trap_note: '末尾表达式 a + b 无分号，自动返回计算结果 7。',
         explanation: 'Rust 函数体末尾无分号的表达式就是返回值：a + b = 7。',
         explanation_en: 'A trailing expression without a semicolon is the return value: a + b = 7.',
+        option_notes: {
+          '(3, 4)': '参数不是返回值；尾表达式 a+b=7',
+          '编译错误': '无分号尾表达式是合法返回写法',
+          '()': '有尾表达式时返回其值',
+        },
       },
       {
         id: 'fn_def_02',
@@ -753,6 +833,11 @@ let result = greet("World");`,
         trap_note: '末尾加分号使 a+b 变为语句，返回 () 而非 i32，类型不匹配导致编译错误。',
         explanation: '加分号后 a + b; 变成语句，函数体尾值为 ()，与声明的返回类型 i32 不匹配，导致编译错误。',
         explanation_en: 'The semicolon turns it into a statement; the body then yields (), mismatching the declared i32 — a compile error.',
+        option_notes: {
+          '0': '类型不匹配编译失败，而非得 0',
+          '7': '加分号后 a+b 变语句，不再返回 7',
+          '()': '尾值 () 与声明的 i32 不匹配即报错',
+        },
       },
       {
         id: 'fn_def_03',
@@ -770,6 +855,11 @@ let result = greet("World");`,
         trap_note: 'Java 函数必须是类中的 static 方法，参数和返回类型必须声明。',
         explanation: 'Java 方法必须声明参数与返回类型；独立函数对应类中的 static 方法，def 与无类型参数都不是 Java 语法。',
         explanation_en: 'Java methods require typed parameters and return types; a free function maps to a static method in a class.',
+        option_notes: {
+          'String greet(name) { return "Hello, " + name; }': '参数缺少类型声明',
+          'def greet(String name) { ... }': 'def 是 Python 关键字',
+          'public greet(name) { return "Hello, " + name; }': '缺返回类型且参数无类型',
+        },
       },
       {
         id: 'fn_def_04',
@@ -783,6 +873,11 @@ let result = greet("World");`,
         trap_note: 'Python 无 return 时隐式返回 None，Rust 对应的是 ()',
         explanation: '没有 return 语句的 Python 函数隐式返回 None；这与 Rust 无尾表达式时返回单元类型 () 类似。',
         explanation_en: 'A Python function without return implicitly returns None, analogous to Rust returning unit ().',
+        option_notes: {
+          '0': '无 return 时返回 None，不是 0',
+          '()': '() 是 Rust 单元类型；Python 对应 None',
+          '报错': 'pass 函数体合法',
+        },
       },
       {
         id: 'fn_def_05',
@@ -796,6 +891,11 @@ let result = greet("World");`,
         trap_note: '显式 return 合法，尾表达式只是更惯用的写法',
         explanation: '显式 return 5; 完全合法，返回 5；尾表达式（无分号）只是更惯用的等价写法。',
         explanation_en: 'An explicit return 5; is perfectly valid and returns 5; the tail expression is just the idiomatic equivalent.',
+        option_notes: {
+          '0': '返回的是 5',
+          '编译错误': '显式 return 完全合法',
+          '()': 'return 5 返回 i32',
+        },
       },
     ],
   },
@@ -951,6 +1051,11 @@ fn greet(name: Option<&str>) -> String {
         trap_note: 'b=10 被 2 覆盖，3,4 进入 *args 元组。',
         explanation: '实参按位置绑定：a=1、b=2 覆盖默认值 10，剩余的 3、4 打包进 *args 元组。',
         explanation_en: 'Positional binding: a=1, b=2 overrides the default 10, and the remaining 3, 4 pack into the *args tuple.',
+        option_notes: {
+          '1 10 (2, 3, 4)': '实参 2 覆盖了 b 的默认值 10',
+          '1 2 3 4': 'args 是元组，打印带括号 (3, 4)',
+          '1 10 ()': 'b 被 2 覆盖，剩余实参进 args',
+        },
       },
       {
         id: 'fn_param_02',
@@ -963,6 +1068,11 @@ fn greet(name: Option<&str>) -> String {
         trap_note: 'Option 模拟默认参数：None 走默认路径。',
         explanation: 'None 命中 match 的默认分支——Rust 用 Option 显式表达「可能缺省」，而非隐式默认参数。',
         explanation_en: 'None takes the default match arm — Rust models optionality explicitly with Option instead of default parameters.',
+        option_notes: {
+          '"Hello, None!"': 'None 走默认分支，不会格式化 None',
+          '"Hello, !"': 'Some 分支才插值；None 用固定默认串',
+          '编译错误': 'Option match 两分支齐全，合法',
+        },
       },
       {
         id: 'fn_param_03',
@@ -980,6 +1090,11 @@ fn greet(name: Option<&str>) -> String {
         trap_note: 'Rust 不支持默认参数，Option + unwrap_or 是标准替代模式。',
         explanation: 'Rust 不支持默认参数语法；Option<u16> + unwrap_or(8080) 是惯用替代，调用方传 None 即取默认值。',
         explanation_en: 'Rust has no default-parameter syntax; Option<u16> + unwrap_or(8080) is the idiomatic substitute.',
+        option_notes: {
+          'fn connect(host: &str, port: u16 = 8080)': 'Rust 不支持默认参数语法',
+          'fn connect(host: &str) -> String { ... }  // 只传 host': '丢失 port 参数，签名不等价',
+          'fn connect(host: &str, port: u16) -> String { ... }  // 无默认': '调用方必须显式传 port，无默认语义',
+        },
       },
       {
         id: 'fn_param_04',
@@ -993,6 +1108,11 @@ fn greet(name: Option<&str>) -> String {
         trap_note: '默认参数在 def 时求值一次，可变默认值被所有调用共享',
         explanation: '默认列表在函数定义时创建一次，两次调用共享同一个列表：f(1) 后为 [1]，f(2) 后为 [1, 2]。',
         explanation_en: 'The default list is created once at def time and shared: after f(1) it is [1], after f(2) it is [1, 2].',
+        option_notes: {
+          '[2]': '默认列表被共享，f(1) 的 1 还在',
+          '[]': 'append 生效，列表非空',
+          '报错': '可变默认参数合法（只是有共享陷阱）',
+        },
       },
       {
         id: 'fn_param_05',
@@ -1006,6 +1126,11 @@ fn greet(name: Option<&str>) -> String {
         trap_note: 'varargs 接受散值或数组，是 Python *args 的 Java 对应',
         explanation: 'Java 可变参数 int... 允许 sum(1, 2, 3) 散值调用（也可传 int[]），类似 Python 的 *args。',
         explanation_en: 'Java varargs int... accepts scattered arguments like sum(1, 2, 3) (or an int[]), similar to Python *args.',
+        option_notes: {
+          '只能传数组，不能传散值': 'varargs 正是为散值调用设计的',
+          'sum([1, 2, 3])': 'Java 数组字面量是 new int[]{...}',
+          '编译错误': 'varargs 声明与散值调用都合法',
+        },
       },
     ],
   },
@@ -1153,6 +1278,11 @@ println!("{} {}", quotient, remainder);`,
         difficulty: 3,
         explanation: 'return a // b, a % b 返回元组 (3,2)，解包后 q=3、r=2，print 以空格分隔输出 3 2。',
         explanation_en: 'The comma return builds the tuple (3,2); unpacked q=3, r=2, printed space-separated as 3 2.',
+        option_notes: {
+          '17 5': '那是输入参数，不是商和余数',
+          '(3, 2)': '解包后 print(q, r) 输出 3 2，不带括号',
+          '2 3': '商 3 余 2，顺序反了',
+        },
       },
       {
         id: 'fn_ret_02',
@@ -1165,6 +1295,11 @@ println!("{} {}", quotient, remainder);`,
         trap_note: 'Rust 元组解包与 Python 语义一致。',
         explanation: 'Rust 元组返回 + let 解构与 Python 语义一致：17/5=3、17%5=2。',
         explanation_en: 'Rust tuple returns + let-destructuring match Python: 17/5=3, 17%5=2.',
+        option_notes: {
+          '17 5': '那是输入，不是计算结果',
+          '(3, 2)': 'println 解包输出 3 2，不带括号',
+          '编译错误': '元组返回 + let 解构合法',
+        },
       },
       {
         id: 'fn_ret_03',
@@ -1182,6 +1317,11 @@ println!("{} {}", quotient, remainder);`,
         trap_note: 'C 不支持多返回类型。指针输出参数是最常见等价模式；返回结构体需复合字面量 (struct Pair){a, b}，而 (a, b) 是逗号表达式只返回 b。',
         explanation: 'C 函数只能返回一个值，指针输出参数是标准做法；(a, b) 是逗号表达式只返回 b，return {a, b} 不是合法 C17 语法。',
         explanation_en: 'C returns a single value; pointer out-parameters are the standard pattern. (a, b) is a comma expression yielding only b.',
+        option_notes: {
+          'int, int f(int a, int b) { return a, b; }': 'C 不允许多返回类型声明',
+          'struct Pair f(int a, int b) { return (a, b); }': '逗号表达式只返回 b，类型不匹配',
+          'int* f(int a, int b) { int r[2] = {a, b}; return r; }': '返回局部数组指针，悬垂指针',
+        },
       },
       {
         id: 'fn_ret_04',
@@ -1195,6 +1335,11 @@ println!("{} {}", quotient, remainder);`,
         trap_note: 'Java 单返回值，多值用数组或容器；Python 的元组返回没有直接对应',
         explanation: 'Java 方法只能返回一个值，返回两个 int 惯用数组 new int[]{a, b}（或自定义类/record）；return a, b 非法。',
         explanation_en: 'Java methods return a single value; two ints are returned via an array (or a record). return a, b is invalid.',
+        option_notes: {
+          'return a, b;': 'return 只接受单个表达式',
+          'return (a, b);': 'Java 没有逗号表达式/元组',
+          'int, int f()': 'Java 不允许多返回类型',
+        },
       },
       {
         id: 'fn_ret_05',
@@ -1208,6 +1353,11 @@ println!("{} {}", quotient, remainder);`,
         trap_note: 'Rust 的单元类型 () 对应 C/Java 的 void，但它是一个真实的值',
         explanation: '无返回标注且无尾表达式的函数返回单元类型 ()——它既是类型也是唯一的值，不同于 C 的 void。',
         explanation_en: 'A function with no return annotation and no tail expression returns the unit type () — a real value, unlike C void.',
+        option_notes: {
+          'void': 'void 是 C/Java 写法；Rust 用 ()',
+          'null': 'Rust 没有 null',
+          'i32': '无返回标注且无尾表达式，返回 ()',
+        },
       },
     ],
   },
@@ -1366,6 +1516,11 @@ println!("{}", x);  // 10`,
         trap_note: 'Python 函数级作用域：if 块内 x=30 修改函数局部 x，不创建新作用域。',
         explanation: 'Python 只有函数级作用域：if 块不创建新作用域，x=30 修改的是函数局部 x；全局 x 不受影响，输出 30 10。',
         explanation_en: 'Python scopes are function-level: the if block creates no scope, so x=30 mutates the local; the global stays 10.',
+        option_notes: {
+          '20 10': 'if 块不创建作用域，x=30 覆盖了 20',
+          '30 30': '函数内 x 是局部，全局 x 仍 10',
+          '20 20': '块内改到 30，全局不变',
+        },
       },
       {
         id: 'scope_02',
@@ -1378,6 +1533,11 @@ println!("{}", x);  // 10`,
         trap_note: 'Rust 遮蔽允许改类型：let x = "hi" 遮蔽了 i32 的 x。外层 x 不受影响。',
         explanation: '块内 let 遮蔽允许换类型："hi" 遮蔽了 i32 的 x；块结束后遮蔽失效，外层 x=10 原样输出。',
         explanation_en: 'Block shadowing may change type: "hi" shadows the i32; outside the block the outer x=10 is intact.',
+        option_notes: {
+          '20 10': '块内第二次 let 遮蔽为 "hi"',
+          'hi hi': '块外遮蔽失效，外层 x 仍 10',
+          '编译错误': '遮蔽允许换类型，合法',
+        },
       },
       {
         id: 'scope_03',
@@ -1395,6 +1555,11 @@ println!("{}", x);  // 10`,
         trap_note: 'for(int i=...) 中 i 作用域限于循环。需在外层声明 i 才能在循环后访问。',
         explanation: 'for(int i=...) 中声明的 i 作用域限于循环体；要在循环后使用 i，必须在外层先声明。',
         explanation_en: 'i declared in for(int i=...) is scoped to the loop; declare it outside to use it afterwards.',
+        option_notes: {
+          'for (int i = 0; i < 5; i++) {} printf("%d", i);': 'i 作用域限于循环，循环后找不到 i',
+          'for (i = 0; i < 5; i++) {} printf("%d", i);': 'i 未声明，编译错误',
+          'for (int i = 0; i < 5; i++) { int j = i; } printf("%d", j);': 'j 作用域限于循环体，外部访问非法',
+        },
       },
       {
         id: 'scope_04',
@@ -1408,6 +1573,11 @@ println!("{}", x);  // 10`,
         trap_note: 'Java/C 的块级作用域：块内声明的变量块外不可见',
         explanation: 'x 声明在裸块内，作用域限于该块；块外访问 x 找不到符号，编译错误。',
         explanation_en: 'x is scoped to the bare block; referencing it outside is a cannot-find-symbol compile error.',
+        option_notes: {
+          '0': '找不到符号 x',
+          '1': 'x 作用域限于裸块，块外不可见',
+          'null': 'int 不能为 null，编译期即失败',
+        },
       },
       {
         id: 'scope_05',
@@ -1421,6 +1591,11 @@ println!("{}", x);  // 10`,
         trap_note: 'global 声明让函数内的赋值作用于模块级变量',
         explanation: 'global x 声明函数内的 x 指向模块级变量，x = 2 修改全局，输出 2；不加 global 则只会创建局部 x。',
         explanation_en: 'global x makes the assignment target the module-level variable, printing 2; without it a local x would be created.',
+        option_notes: {
+          '1': 'global 使赋值作用于全局 x',
+          '报错': 'global 用法合法',
+          'None': 'x 被赋值为 2',
+        },
       },
     ],
   },
@@ -1592,6 +1767,11 @@ def http_status(code):
         difficulty: 3,
         explanation: 'match 按模式精确匹配：404 命中第二分支；_ 是通配兜底，类似 switch 的 default。',
         explanation_en: 'match picks the exact pattern: 404 hits the second arm; _ is the wildcard fallback, like default.',
+        option_notes: {
+          '"OK"': '404 不匹配 200 分支',
+          '"Other"': '404 精确命中第二分支，不到 _ 兜底',
+          '编译错误': '含 _ 兜底，穷尽且合法',
+        },
       },
       {
         id: 'pm_02',
@@ -1604,6 +1784,11 @@ def http_status(code):
         trap_note: 'C switch 贯穿：case 2 没有 break/return，贯穿到 case 3 返回 "three"。',
         explanation: 'case 2 没有 break/return，控制流贯穿（fall through）到 case 3 执行 return "three"——C switch 默认贯穿。',
         explanation_en: 'case 2 lacks break/return, so execution falls through into case 3 and returns "three" — C switch falls through by default.',
+        option_notes: {
+          '"two"': 'case 2 只 printf 不 return，贯穿到 case 3',
+          '"other"': '贯穿停在 case 3 的 return',
+          '未定义行为': '贯穿是确定语义，不是 UB',
+        },
       },
       {
         id: 'pm_03',
@@ -1621,6 +1806,11 @@ def http_status(code):
         trap_note: 'Rust 用 match 替代 switch，_ 替代 default，无贯穿无需 break。',
         explanation: 'match 对应 switch：_ 对应 default，各分支自动隔离无需 break；break 只能用于循环，不能出现在 match/if 中。',
         explanation_en: 'match replaces switch: _ replaces default and arms never fall through; break belongs to loops only.',
+        option_notes: {
+          'switch x { 1 => ..., default => ... }': 'Rust 没有 switch 关键字',
+          'if x == 1 { ...; break; } else { ...; break; }': 'break 只能用于循环',
+          'match x { 1 => ...; break; _ => ...; break; }': 'match 分支无需也不允许 break',
+        },
       },
       {
         id: 'pm_04',
@@ -1634,6 +1824,11 @@ def http_status(code):
         trap_note: 'Rust match 必须穷尽所有可能，C switch 不强制',
         explanation: 'i32 还有 1、2 之外的取值，match 未覆盖且无 _ 兜底，编译器报 non-exhaustive patterns 错误。',
         explanation_en: 'i32 has values beyond 1 and 2; without a _ arm the match is non-exhaustive and fails to compile.',
+        option_notes: {
+          '合法': 'i32 取值未穷尽，缺 _ 即编译错误',
+          '运行时 panic': '穷尽性在编译期检查',
+          '合法但有警告': 'non-exhaustive 是硬错误',
+        },
       },
       {
         id: 'pm_05',
@@ -1647,6 +1842,11 @@ def http_status(code):
         trap_note: '结构化模式匹配用软关键字，避免破坏既有代码',
         explanation: 'match/case 是软关键字：只在模式匹配语境生效，match = 5 这样的变量赋值仍然合法，保证向后兼容。',
         explanation_en: 'match/case are soft keywords: they act as keywords only in pattern contexts, so match = 5 still works.',
+        option_notes: {
+          '硬关键字，不能作变量名': 'match 是软关键字，match = 5 仍合法',
+          '不是关键字': '它在模式匹配语境中是关键字',
+          '内置函数': 'match 是语法结构，不是函数',
+        },
       },
     ],
   },

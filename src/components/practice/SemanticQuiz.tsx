@@ -157,6 +157,12 @@ export function SemanticQuiz({ concept }: Props) {
               <span className="explanation-label">{t('explanation_label', uiLanguage)}</span>
               {result.explanation}
             </div>
+            {!result.correct && result.selected_note && (
+              <div className="quiz-choice-note">
+                <span className="choice-note-label">{t('your_choice_label', uiLanguage)}</span>
+                {result.selected_note}
+              </div>
+            )}
             {result.trap_note && (
               <div className="quiz-trap-note">⚠ {result.trap_note}</div>
             )}

@@ -314,3 +314,18 @@ body {
 *::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* Wrong-choice rationale label (issue #20) */
+.choice-note-label {
+  display: inline-block;
+  padding: 1px 8px;
+  margin-right: 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(247, 118, 142, 0.15);
+  color: var(--accent-red);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  vertical-align: 1px;
+  white-space: nowrap;
+}

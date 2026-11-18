@@ -192,6 +192,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '不加f后缀的3.14默认为double类型，加f才是float',
         explanation: 'Java 浮点字面量默认 double，后缀 f/F 才表示 float；3.14f 显式标注为 32 位单精度。',
         explanation_en: 'Java floating-point literals default to double; the f/F suffix marks a 32-bit float.',
+        option_notes: {
+          'int': '带小数点是浮点字面量，不是整型',
+          'double': '不加 f 后缀的 3.14 才是 double',
+          'String': '没有引号，不是字符串字面量',
+        },
       },
       {
         id: 'literal_values_semantic_2',
@@ -204,6 +209,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         difficulty: 1,
         explanation: '0x 前缀表示十六进制：2×16+10=42，与十进制 42 是同一个整数值的不同词法写法。',
         explanation_en: '0x marks hexadecimal: 2×16+10=42 — a different spelling of the same integer value.',
+        option_notes: {
+          '26': '换算错误：0x2A = 2×16+10 = 42',
+          '52': '这是 0x34 的值；0x2A = 42',
+          '2A': '缺 0x 前缀，2A 不是合法数字字面量',
+        },
       },
       {
         id: 'literal_values_semantic_3',
@@ -217,6 +227,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'Rust没有float/double类型名，而是用f32/f64表示浮点类型',
         explanation: 'Rust 用位宽命名浮点类型：f32/f64；_f64 后缀把字面量显式标注为 64 位双精度。',
         explanation_en: 'Rust names floats by width (f32/f64); the _f64 suffix pins the literal to 64-bit double precision.',
+        option_notes: {
+          'f32': '_f32 后缀才是 f32，这里是 _f64',
+          'float': 'Rust 没有 float 类型名，那是 C/Java 叫法',
+          'double': 'Rust 没有 double 类型名，64 位浮点叫 f64',
+        },
       },
       {
         id: 'literal_values_semantic_4',
@@ -230,6 +245,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'C/Java 开发者常以为布尔不能参与算术——Python 的 bool 是 int 的子类',
         explanation: 'Python 的 bool 是 int 的子类：True==1、False==0，因此 True + True = 2。',
         explanation_en: 'Python bool subclasses int: True==1 and False==0, so True + True = 2.',
+        option_notes: {
+          '1': 'True==1，两个相加是 1+1=2',
+          'True': 'bool 参与算术按 int 计算，结果是 2',
+          'TypeError': 'bool 是 int 子类，加法完全合法',
+        },
       },
       {
         id: 'literal_values_semantic_5',
@@ -243,6 +263,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'Java 的字符字面量是 char，C 的却是 int——词法层的亲缘差异',
         explanation: 'C 的字符常量是 int 类型（\'A\' 即 65），这与 Java 的 char 不同，是 C 的历史设计。',
         explanation_en: 'C character constants are int (\'A\' is 65), unlike Java\'s char — a historical C design.',
+        option_notes: {
+          'char': '那是 Java 的规则；C 字符常量类型是 int',
+          'string': '单引号是字符常量，双引号才是字符串',
+          'unsigned char': 'C 字符常量是 int，不是 unsigned char',
+        },
       },
     ],
   },
@@ -439,6 +464,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '这不是mut而是shadowing——Rust允许同名变量遮蔽',
         explanation: '第二个 let x 是新声明，遮蔽（shadowing）了旧绑定而非修改它——Rust 允许同名变量依次遮蔽，输出 43。',
         explanation_en: 'The second `let x` is a new declaration shadowing the old binding, not a mutation — so 43 prints.',
+        option_notes: {
+          '42': '第二个 let x 遮蔽旧绑定，读取的是新值 43',
+          '编译错误': 'Rust 允许同名遮蔽，重复 let 合法',
+          '运行时错误': '遮蔽是编译期机制，运行正常输出 43',
+        },
       },
       {
         id: 'variable_declaration_semantic_2',
@@ -452,6 +482,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'var x = 42在Java10+合法但语义是类型推断而非动态类型',
         explanation: 'int x = 42; 显式声明整型并初始化；var 是类型推断而非显式标注，Integer 是装箱引用类型，裸赋值不构成声明。',
         explanation_en: '`int x = 42;` explicitly declares an int; `var` infers rather than states the type, and `Integer` is a boxed reference type.',
+        option_notes: {
+          'x = 42;': '裸赋值不是声明，未声明变量不能赋值',
+          'var x = 42;': 'var 是类型推断，没有显式写出整型',
+          'Integer x = 42;': 'Integer 是装箱引用类型，不是基本整型 int',
+        },
       },
       {
         id: 'variable_declaration_semantic_3',
@@ -465,6 +500,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'C局部变量未初始化时值不确定，这是与Java/Rust的重要差异',
         explanation: 'C 的局部变量在栈上分配且不自动清零，未初始化时是残留的内存垃圾——读取它的值是未定义行为。',
         explanation_en: 'C locals live on the stack without zeroing; an uninitialized one holds indeterminate garbage — reading it is undefined behavior.',
+        option_notes: {
+          '0': 'C 局部变量不自动清零（静态存储期才清零）',
+          'null': 'C 没有 null，int 也不是引用',
+          '编译错误': '声明未初始化合法，只是读取时值不确定',
+        },
       },
       {
         id: 'variable_declaration_semantic_4',
@@ -478,6 +518,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'C 允许读未初始化局部变量（未定义行为），Java 在编译期就拒绝',
         explanation: 'Java 有明确赋值（definite assignment）规则：局部变量读取前必须赋值，否则编译错误——比 C 的未定义行为更安全。',
         explanation_en: 'Java enforces definite assignment: a local must be assigned before reading, else a compile error — safer than C undefined behavior.',
+        option_notes: {
+          '0': 'Java 局部变量不默认初始化，读取前必须赋值',
+          'null': 'int 是基本类型不能为 null，且编译期即拒绝',
+          '运行时异常': '明确赋值检查在编译期完成',
+        },
       },
       {
         id: 'variable_declaration_semantic_5',
@@ -491,6 +536,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '遮蔽产生全新绑定，mut 不会从旧绑定继承',
         explanation: '第二个 let x 遮蔽出新的不可变绑定，mut 不继承；对不可变的 x 执行 += 是编译错误。',
         explanation_en: 'The second let x shadows with a fresh immutable binding — mut is not inherited, so += fails to compile.',
+        option_notes: {
+          '1': '遮蔽后 x=2，且 += 编译错误',
+          '2': 'x+1=2 能算出，但随后 += 编译失败',
+          '3': '新绑定不可变，+= 编译失败，得不到 3',
+        },
       },
     ],
   },
@@ -687,6 +737,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'Python的"常量"(全大写命名)实际是变量，可以被重新赋值',
         explanation: 'Python 没有语言级常量：全大写只是命名约定，PI 仍是普通变量，重新赋值后输出 3.14159。',
         explanation_en: 'Python has no language-level constants; ALL_CAPS is convention only, so PI reassigns freely to 3.14159.',
+        option_notes: {
+          '3.14': 'PI 已被重新赋值为 3.14159',
+          '报错': '全大写只是约定，重新赋值合法',
+          '不变': 'Python 没有语言级常量，PI 可变',
+        },
       },
       {
         id: 'constant_declaration_semantic_2',
@@ -700,6 +755,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'static final是编译期不可变常量，对应Rust的const而非let',
         explanation: 'const 是编译期常量、可内联，最贴近 static final 的语义；static 有固定地址不内联，let 默认可变，final 不是 Rust 关键字。',
         explanation_en: '`const` is a compile-time, inlineable constant — closest to `static final`; `static` has a fixed address, `let` is mutable by default.',
+        option_notes: {
+          'let MAX = 100;': 'let 是运行期绑定，不是编译期常量',
+          'static MAX: i32 = 100;': 'static 有固定地址、不内联，与 static final 有别',
+          'final MAX = 100;': 'final 不是 Rust 关键字',
+        },
       },
       {
         id: 'constant_declaration_semantic_3',
@@ -712,6 +772,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         difficulty: 1,
         explanation: 'const 限定的对象不可修改，赋值在编译期被拒绝——C 的 const 由编译器强制，不同于 Python 的纯约定。',
         explanation_en: 'A const-qualified object cannot be modified; the compiler rejects the assignment — enforced, not merely conventional.',
+        option_notes: {
+          'x变为43': 'const 对象禁止赋值，编译器拒绝',
+          '运行时错误': 'const 赋值在编译期报错',
+          'x不变但无报错': '编译器会报错，不是静默忽略',
+        },
       },
       {
         id: 'constant_declaration_semantic_4',
@@ -725,6 +790,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'final 锁定的是引用，不是对象内容',
         explanation: 'final 只保证引用 a 不再指向别的数组，数组内容仍可修改——「引用不可变」与「内容不可变」是两回事。',
         explanation_en: 'final only fixes the reference, not the contents: the array elements remain mutable.',
+        option_notes: {
+          '编译错误': 'final 只锁引用，修改元素合法',
+          '运行时异常': 'a[0] 在边界内，正常修改',
+          'a 不变': '元素赋值生效，a[0] 变为 9',
+        },
       },
       {
         id: 'constant_declaration_semantic_5',
@@ -738,6 +808,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'let 可以推断类型，const 必须显式标注',
         explanation: 'Rust 要求 const 必须显式标注类型（如 const MAX: i32 = 100;），不做类型推断——常量签名必须自文档化。',
         explanation_en: 'Rust requires an explicit type on const (e.g. const MAX: i32 = 100;); no inference is performed.',
+        option_notes: {
+          '合法，推断为 i32': 'const 不做类型推断，必须显式标注',
+          '合法，推断为 u32': 'const 必须显式类型，不存在推断',
+          '合法但有警告': '缺少类型标注是硬错误',
+        },
       },
     ],
   },
@@ -938,6 +1013,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'Python开发者常误以为结果是2.5——C整数除法截断',
         explanation: '两个 int 相除结果仍是 int：C 向零截断小数，5/2=2；要得到 2.5 至少需要一方是浮点数。',
         explanation_en: 'int/int stays int: C truncates toward zero, so 5/2=2; at least one float operand is needed for 2.5.',
+        option_notes: {
+          '3': 'C 向零截断而非四舍五入',
+          '2.5': 'int/int 结果仍是 int，小数被截断',
+          '2.0': '结果类型是 int，不会得到浮点 2.0',
+        },
       },
       {
         id: 'basic_operators_semantic_2',
@@ -951,6 +1031,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '&是位与运算符，&&才是逻辑与——C区分位运算和逻辑运算',
         explanation: '&& 是逻辑与且短路求值，对应 Python 的 and；& 是按位与，不短路，二者语义不同。',
         explanation_en: '&& is logical AND with short-circuiting, matching Python `and`; & is bitwise AND and does not short-circuit.',
+        option_notes: {
+          '&': '& 是按位与，不短路，语义不同',
+          'and': 'and 不是 C 关键字',
+          '|': '| 是按位或，逻辑或应写 ||',
+        },
       },
       {
         id: 'basic_operators_semantic_3',
@@ -963,6 +1048,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         difficulty: 1,
         explanation: '// 是地板除：向负无穷方向取整，7//2=3 且结果为 int；单斜杠 / 才是真除法，得 3.5。',
         explanation_en: '// is floor division (rounds toward negative infinity): 7//2=3 as an int; / is true division giving 3.5.',
+        option_notes: {
+          '4': '地板除向下取整，3.5 → 3',
+          '3.5': '// 是整除，/ 才得 3.5',
+          '3.0': '两个 int 的 // 结果仍是 int',
+        },
       },
       {
         id: 'basic_operators_semantic_4',
@@ -976,6 +1066,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'C 的 -7/2 向零截断得 -3，Python 地板除向负无穷取整得 -4',
         explanation: '// 是地板除，向负无穷取整：-3.5 向下取整为 -4；C 的整数除法则向零截断得 -3。',
         explanation_en: '// floors toward negative infinity: -3.5 becomes -4; C integer division truncates toward zero, giving -3.',
+        option_notes: {
+          '3': '结果为负，地板除不会变正',
+          '-3': '那是 C 向零截断的结果；Python 向负无穷取整',
+          '-3.5': '// 结果是 int，会取整',
+        },
       },
       {
         id: 'basic_operators_semantic_5',
@@ -989,6 +1084,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'Python 的 -7 % 2 得 1（余数随除数符号），C 的余数随被除数符号',
         explanation: 'C99 规定整数除法向零截断，余数符号与被除数一致：-7 = (-3)*2 + (-1)，故 -7 % 2 = -1。',
         explanation_en: 'C99 truncates toward zero and the remainder takes the dividend sign: -7 = (-3)*2 + (-1), so -7 % 2 = -1.',
+        option_notes: {
+          '0': '-7 不是 2 的倍数，余数非 0',
+          '1': '那是 Python 的结果；C 余数随被除数得 -1',
+          '编译错误': '负数取模在 C 中合法',
+        },
       },
     ],
   },
@@ -1184,6 +1284,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'let声明的变量默认不可变，+=赋值简写需要mut',
         explanation: 'let 绑定默认不可变，x += 5 要求 let mut x；对不可变绑定赋值是编译错误，而非运行时错误。',
         explanation_en: '`let` bindings are immutable by default; `x += 5` requires `let mut x` — otherwise a compile error.',
+        option_notes: {
+          '5': '编译期即失败，无输出',
+          '10': '赋值语句编译错误，程序无法运行',
+          '15': '不可变绑定上的 += 编译失败',
+        },
       },
       {
         id: 'assignment_operators_semantic_2',
@@ -1197,6 +1302,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'C没有//=运算符，C的整数/整数本身就是整除',
         explanation: 'C 没有 //= 运算符；对整型 x，x = x / 3 的整数除法就是 Python x //= 3 的等价展开，而 /3.0 会做浮点除法。',
         explanation_en: 'C has no //=; for integer x, `x = x / 3` performs the same integer division, while /3.0 would be floating-point.',
+        option_notes: {
+          'x = x / 3.0;': '除以 3.0 是浮点除法，不是整除',
+          'x %= 3;': '这是取余赋值，不是整除',
+          'x = x // 3;': 'C 没有 // 运算符',
+        },
       },
       {
         id: 'assignment_operators_semantic_3',
@@ -1209,6 +1319,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         difficulty: 1,
         explanation: '+= 是复合赋值：x = x + 5 = 15；Java 的 int 变量可变，与 Rust 默认不可变形成对比。',
         explanation_en: '+= is compound assignment: x = x + 5 = 15; Java variables are mutable, unlike Rust defaults.',
+        option_notes: {
+          '5': 'x = 10+5 = 15，不是只取加数',
+          '10': '+= 执行加法，x 不再是 10',
+          '编译错误': 'Java 变量可变，+= 合法',
+        },
       },
       {
         id: 'assignment_operators_semantic_4',
@@ -1222,6 +1337,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '复合赋值自带隐式窄化转换，普通加法会提升为 int',
         explanation: 's + 1 把 s 提升为 int，赋回 short 需显式转换；而 += 隐含窄化转换（等价 s = (short)(s + 1)），因此合法。',
         explanation_en: 's + 1 promotes to int and needs an explicit cast back to short; += includes an implicit narrowing cast, so it compiles.',
+        option_notes: {
+          's = s + 1;': 's+1 提升为 int，赋回 short 需显式转换',
+          '两条都合法': 's = s + 1 缺窄化转换，不合法',
+          '两条都编译错误': 's += 1 自带隐式窄化，合法',
+        },
       },
       {
         id: 'assignment_operators_semantic_5',
@@ -1235,6 +1355,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '复合赋值的右侧作为整体先求值',
         explanation: '复合赋值右侧整体求值：2 + 1 = 3，然后 x = 3 * 3 = 9；不会先算 x*2 再加 1。',
         explanation_en: 'The right-hand side evaluates as a whole: 2 + 1 = 3, then x = 3 * 3 = 9.',
+        option_notes: {
+          '6': '只算了 x*2，忽略右侧的 +1',
+          '7': '误以为先算 x*2 再加 1；右侧整体求值',
+          '编译错误': 'mut 绑定上的 *= 合法',
+        },
       },
     ],
   },
@@ -1440,6 +1565,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'C的/* */不支持嵌套，第一个*/就结束注释',
         explanation: 'C 的块注释不支持嵌套：遇到第一个 */ 注释即结束，其后的「续 */」暴露在注释之外。',
         explanation_en: 'C block comments do not nest: the first */ ends the comment, leaving the trailing text outside it.',
+        option_notes: {
+          '注释范围为整个"外层 /* 内层 */ 续 */"': 'C 块注释不嵌套，第一个 */ 即结束',
+          '编译错误': '注释本身合法，只是范围比直觉小',
+          '注释范围为"内层"': '注释从第一个 /* 开始，不是内层',
+        },
       },
       {
         id: 'comments_semantic_2',
@@ -1452,6 +1582,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         difficulty: 1,
         explanation: '// 是 Java 的单行注释，与 Python # 的词法作用一致；# 在 Java 中非法，未闭合的 /* 会吞掉后续代码。',
         explanation_en: '// is Java\'s line comment, matching Python #; # is invalid in Java and an unclosed /* would swallow following code.',
+        option_notes: {
+          '# 注释': '# 在 Java 中不是注释符号',
+          '/* 注释': '未闭合块注释会吞掉后续代码',
+          '-- 注释': '-- 是 SQL/Lua 风格，Java 不识别',
+        },
       },
       {
         id: 'comments_semantic_3',
@@ -1470,6 +1605,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'Python没有真正的多行注释语法，"""是字符串字面量只是被当作注释使用',
         explanation: '三引号是字符串字面量而非注释语法：独立出现时是被求值后丢弃的表达式，惯用作多行注释；只有位于模块/函数开头才成为 docstring。',
         explanation_en: 'Triple quotes are a string literal, not comment syntax: standalone it is a discarded expression used as a comment; only in leading position does it become a docstring.',
+        option_notes: {
+          '真正的多行注释语法': 'Python 没有多行注释语法，三引号是字符串',
+          '编译错误': '独立字符串表达式合法',
+          '生成文档': '只有位于模块/函数开头才成为 docstring',
+        },
       },
       {
         id: 'comments_semantic_4',
@@ -1483,6 +1623,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'C 的块注释不嵌套，Rust 的块注释支持嵌套——同形不同义',
         explanation: 'Rust 的块注释支持嵌套，内外层配对后整体都是注释；C 遇到第一个 */ 就结束，这是两语言词法的重要差异。',
         explanation_en: 'Rust block comments nest, so the whole span is a comment; C ends at the first */ — a key lexical difference.',
+        option_notes: {
+          '第一个 */ 处结束': '那是 C 的规则；Rust 支持嵌套',
+          '编译错误': '嵌套块注释在 Rust 中合法',
+          '只有内层是注释': '外层到配对 */ 整体都是注释',
+        },
       },
       {
         id: 'comments_semantic_5',
@@ -1496,6 +1641,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '词法分析先识别字符串边界，字符串内的注释标记无效',
         explanation: '词法分析器先识别字符串字面量的边界，引号内的 // 只是普通字符，不会开启注释。',
         explanation_en: 'The lexer recognizes string boundaries first; // inside quotes is ordinary text, not a comment.',
+        option_notes: {
+          '是行注释': '// 在引号内，属于字符串内容',
+          '编译错误': '字符串内的 // 完全合法',
+          '是文档注释': '文档注释是 /** */，字符串内同样不生效',
+        },
       },
     ],
   },
@@ -1702,6 +1852,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'Python有elif单一关键字，Java/C必须写成else if两个关键字',
         explanation: 'Java 没有 elif 关键字，必须写成 else if 两个关键字；elseif 是 PHP 风格，case 属于 switch。',
         explanation_en: 'Java has no `elif`; it must be the two keywords `else if`. `elseif` is PHP-style and `case` belongs to switch.',
+        option_notes: {
+          'elif (x == 0)': 'Java 没有 elif 关键字',
+          'elseif (x == 0)': 'elseif 是 PHP 写法',
+          'case x == 0:': 'case 属于 switch，不能写比较表达式',
+        },
       },
       {
         id: 'conditional_keywords_semantic_2',
@@ -1715,6 +1870,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'Rust的条件括号是可选的——加了也不报错，但属于冗余写法',
         explanation: 'Rust 条件外的括号可选：加了合法但冗余，编译器会给出 unnecessary parentheses 警告，语义完全不变。',
         explanation_en: 'Parentheses around Rust conditions are optional — legal but redundant (the compiler warns); semantics are unchanged.',
+        option_notes: {
+          '编译错误（条件不能用括号）': '括号合法，只是冗余',
+          '运行时错误': '条件括号不影响运行',
+          '合法但语义不同': '加括号不改变语义',
+        },
       },
       {
         id: 'conditional_keywords_semantic_3',
@@ -1728,6 +1888,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'elif按顺序判断，x=5先满足x>3就执行medium分支，不再判断后续elif',
         explanation: 'if/elif 链自上而下短路：x=5 不满足 >10，满足 >3 即输出 medium，后续分支不再判断。',
         explanation_en: 'The if/elif chain short-circuits top-down: x=5 fails >10, matches >3, prints medium, and skips the rest.',
+        option_notes: {
+          'big': 'x=5 不满足 x>10',
+          'small': 'x>3 先命中，后续 elif 不再判断',
+          'zero': '命中 medium 分支，不会到 else',
+        },
       },
       {
         id: 'conditional_keywords_semantic_4',
@@ -1741,6 +1906,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '悬空 else：else 与最近的未配对 if 结合，而不是缩进暗示的外层',
         explanation: 'else 与最近的未配对 if（内层 if (b)）结合：a=1 进入内层，b=0 走 else，x=2——缩进会误导人。',
         explanation_en: 'The else binds to the nearest unmatched if (the inner one): a=1 enters, b=0 takes the else, x=2 — indentation misleads.',
+        option_notes: {
+          '0': 'else 与内层 if 配对，执行 x=2',
+          '1': 'b=0，内层 if 为假，不执行 x=1',
+          '编译错误': '悬空 else 合法，按最近配对解析',
+        },
       },
       {
         id: 'conditional_keywords_semantic_5',
@@ -1754,6 +1924,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'C/Python 允许非布尔条件（真值 coercion），Rust 严格要求 bool',
         explanation: 'Rust 的条件必须是 bool，不做真值转换：整数 1 不能当条件，编译错误；需写 if x != 0。',
         explanation_en: 'Rust conditions must be bool with no truthiness coercion: an integer condition fails to compile; write if x != 0.',
+        option_notes: {
+          '合法，1 为真': 'Rust 不做真值转换，条件必须是 bool',
+          '合法但有警告': '类型不匹配是硬错误',
+          '运行时错误': '编译期即拒绝',
+        },
       },
     ],
   },
@@ -1961,6 +2136,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '0..5是左闭右开范围——包含0但不包含5',
         explanation: '0..5 是左闭右开区间 [0,5)：含 0 不含 5，与 Python range(5) 一致；0..=5 才包含 5。',
         explanation_en: '0..5 is half-open [0,5): includes 0, excludes 5 — like range(5); only 0..=5 includes 5.',
+        option_notes: {
+          '1, 2, 3, 4, 5': '范围从 0 开始且不含 5',
+          '0, 1, 2, 3, 4, 5': '0..5 右开不含 5；0..=5 才含',
+          '1, 2, 3, 4': '起点是 0 不是 1',
+        },
       },
       {
         id: 'loop_keywords_semantic_2',
@@ -1974,6 +2154,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'range(5)生成0到4(不含5)，对应C的i=0且i<5',
         explanation: 'range(5) 生成 0..4：对应 i=0 起、i<5 止；i<=5 会多跑一轮，i=1 起会漏掉 0。',
         explanation_en: 'range(5) yields 0..4: start at i=0, stop at i<5; i<=5 over-runs and starting at 1 skips 0.',
+        option_notes: {
+          'for (int i = 1; i < 5; i++)': '从 1 开始会漏掉 0',
+          'for (int i = 0; i <= 5; i++)': 'i<=5 会多跑 i=5 一轮',
+          'for (i in 0..5)': '这是 Rust 语法，不是 C',
+        },
       },
       {
         id: 'loop_keywords_semantic_3',
@@ -1992,6 +2177,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'Rust的loop关键字显式表达"无限循环"意图，比while true更清晰',
         explanation: 'loop 显式声明无限循环（无需条件表达式），break 立即退出；它比 while true 意图更清晰，且支持 break 带值返回。',
         explanation_en: '`loop` declares an infinite loop without a condition; break exits immediately. Clearer intent than `while true`, and it supports break-with-value.',
+        option_notes: {
+          '编译错误——loop不能单独使用': 'loop 可独立使用，break 合法',
+          '循环体一次也不执行': 'loop 先执行循环体，已执行一次',
+          '无限循环且无法退出': 'break 立即退出循环',
+        },
       },
       {
         id: 'loop_keywords_semantic_4',
@@ -2005,6 +2195,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: '.. 与 ..= 只差一个等号，边界语义完全不同',
         explanation: '0..=3 是闭区间 [0,3]，包含右端点 3；0..3 才是半开区间。',
         explanation_en: '0..=3 is the closed interval [0,3] including 3; only 0..3 is half-open.',
+        option_notes: {
+          '0, 1, 2': '那是 0..3；..= 包含右端点 3',
+          '1, 2, 3': '起点是 0',
+          '0, 1, 2, 3, 4': '右端点是 3，不会到 4',
+        },
       },
       {
         id: 'loop_keywords_semantic_5',
@@ -2018,6 +2213,11 @@ export const lexicalP1Concepts: ConceptNode[] = [
         trap_note: 'range 默认步长 +1，start > stop 时为空——倒序需要显式 -1',
         explanation: 'range(5, 0) 默认步长 +1，从 5 向上走永远到不了 0，序列为空；倒序应写 range(5, 0, -1)。',
         explanation_en: 'range(5, 0) defaults to step +1 and is empty; counting down requires range(5, 0, -1).',
+        option_notes: {
+          '5 4 3 2 1': '倒序需要显式步长 range(5,0,-1)',
+          '0 1 2 3 4': 'range(5,0) 不是 range(5)',
+          '报错': '空 range 合法，只是不迭代',
+        },
       },
     ],
   },

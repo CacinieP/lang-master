@@ -23,6 +23,7 @@ const translations: TranslationMap = {
   quiz_wrong: { zh: '不正确', en: 'Incorrect' },
   quiz_try_again: { zh: '再试一次', en: 'Try again' },
   explanation_label: { zh: '解析', en: 'Explanation' },
+  your_choice_label: { zh: '你的选择', en: 'Your choice' },
   transfer_note_label: { zh: '迁移提示', en: 'Transfer note' },
   challenge_next_hint: { zh: '按 Enter 继续', en: 'Press Enter to continue' },
   quiz_keyboard_hint: { zh: '键盘：1-4 选择，Enter 提交/继续', en: 'Keys: 1-4 select, Enter submit/continue' },

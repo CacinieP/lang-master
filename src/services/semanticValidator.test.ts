@@ -12,6 +12,10 @@ const test: SemanticTest = {
   difficulty: 1,
   explanation: '+= 是复合赋值：10 + 5 = 15。',
   explanation_en: '+= is compound assignment: 10 + 5 = 15.',
+  option_notes: {
+    '10': '这是初始值，还没加 5',
+    '5': '这是加数，不是和',
+  },
 };
 
 describe('checkAnswer', () => {
@@ -51,5 +55,15 @@ describe('checkAnswer', () => {
     expect(checkAnswer(withTrap, '15').trap_note).toBe('注意整除');
     expect(checkAnswer(withTrap, '10', 'en').trap_note).toBe('注意整除');
     expect(checkAnswer(test, '15').trap_note).toBeUndefined();
+  });
+
+  it('returns the rationale for the selected wrong option (issue #20)', () => {
+    expect(checkAnswer(test, '10').selected_note).toBe('这是初始值，还没加 5');
+    expect(checkAnswer(test, '5').selected_note).toBe('这是加数，不是和');
+    expect(checkAnswer(test, '5', 'en').selected_note).toBe('这是加数，不是和');
+  });
+
+  it('has no selected_note when the answer is correct', () => {
+    expect(checkAnswer(test, '15').selected_note).toBeUndefined();
   });
 });
