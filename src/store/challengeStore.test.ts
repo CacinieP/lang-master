@@ -237,8 +237,10 @@ describe('challenge mastery integration (issue #17)', () => {
   });
 
   function startWithConcept(conceptId: string) {
-    // Restrict the pool to one concept's layer+difficulty via config, then find it.
-    useChallengeStore.getState().setConfig({ mode: 'count', questionCount: 50 });
+    // Use the FULL bank (questionCount > 120) so the target concept is
+    // guaranteed in the pool — a random 50-question slice missed it ~9% of
+    // the time (issue #24 flaky CI).
+    useChallengeStore.getState().setConfig({ mode: 'count', questionCount: 1000 });
     useChallengeStore.getState().startChallenge();
     const idx = useChallengeStore.getState().problems.findIndex((p) => p.concept.id === conceptId);
     expect(idx, `concept ${conceptId} must be in the pool`).toBeGreaterThanOrEqual(0);
