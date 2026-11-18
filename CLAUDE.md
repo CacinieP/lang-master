@@ -9,8 +9,8 @@
 ## Architecture
 - `src/types/` — All TypeScript types, derived from `docs/DATA-MODEL.md`
 - `src/data/concepts/` — Static concept data (one file per layer), aggregated by `index.ts`
-- `src/store/` — Zustand stores (conceptStore, userStore, progressStore, uiStore)
-- `src/services/` — Business logic (conceptEngine, trapAdvisor, masteryTracker, semanticValidator, storage)
+- `src/store/` — Zustand stores (conceptStore, userStore, progressStore, uiStore, challengeStore)
+- `src/services/` — Business logic (conceptEngine, trapAdvisor, masteryTracker, semanticValidator, storage, challengeEngine)
 - `src/components/` — React UI components organized by feature
 - `src/utils/` — Pure utility functions (highlight, shuffle, i18n)
 
@@ -35,4 +35,9 @@
 - `npm run test` — Run tests (Vitest)
 
 ## Current Phase
-Alpha: Explore mode only, localStorage persistence, no sandbox execution
+Alpha: Explore + Challenge modes, localStorage persistence, no sandbox execution
+
+## Testing
+Vitest (node env, no jsdom), colocated `*.test.ts`. Data-integrity suites in
+`src/data/concepts/` enforce the machine-checkable C1-C7 constraints — keep
+`npm test` green; new concepts must pass them.
