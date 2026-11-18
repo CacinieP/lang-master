@@ -56,6 +56,8 @@ src/
 │   ├── concept/    # Concept display (ParadigmView, ExpressionCard)
 │   ├── trap/       # Trap hints (TrapAdvisor)
 │   ├── practice/   # Practice (SemanticQuiz)
+│   ├── challenge/  # Challenge mode (Lobby, Arena, Result)
+│   ├── common/     # Shared UI (Toast, ErrorBoundary)
 │   └── onboarding/ # Onboarding (WelcomeScreen)
 └── utils/          # Utility functions
 ```
@@ -71,7 +73,7 @@ src/
 
 ## Status
 
-**Current phase: Alpha development** — React + TypeScript + Vite web app, 4 languages (Python/C/Java/Rust) × P1-P3 concepts × explore mode.
+**Current phase: Alpha development** — React + TypeScript + Vite web app, 4 languages (Python/C/Java/Rust) × P1-P3 concepts × explore + challenge modes.
 
 Live demo: [https://caciniep.github.io/lang-master/](https://caciniep.github.io/lang-master/)
 
@@ -158,6 +160,8 @@ src/
 │   ├── concept/    # 概念展示 (ParadigmView, ExpressionCard)
 │   ├── trap/       # 陷阱提示 (TrapAdvisor)
 │   ├── practice/   # 练习 (SemanticQuiz)
+│   ├── challenge/  # 挑战模式 (Lobby, Arena, Result)
+│   ├── common/     # 通用组件 (Toast, ErrorBoundary)
 │   └── onboarding/ # 引导 (WelcomeScreen)
 └── utils/          # 工具函数
 ```
@@ -173,7 +177,7 @@ src/
 
 ## 状态
 
-**当前阶段：Alpha 开发** — React + TypeScript + Vite Web 应用，4语言(Python/C/Java/Rust) × P1-P3概念 × 探索模式。
+**当前阶段：Alpha 开发** — React + TypeScript + Vite Web 应用，4语言(Python/C/Java/Rust) × P1-P3概念 × 探索 + 挑战模式。
 
 在线体验：[https://caciniep.github.io/lang-master/](https://caciniep.github.io/lang-master/)
 
