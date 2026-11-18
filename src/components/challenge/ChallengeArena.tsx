@@ -3,6 +3,7 @@ import { useChallengeStore } from '@/store/challengeStore';
 import { useUserStore } from '@/store/userStore';
 import { ChallengeTimer } from './ChallengeTimer';
 import { StreakIndicator } from './StreakIndicator';
+import { QuestionText } from '../common/QuestionText';
 import { t } from '@/utils/i18n';
 import './Challenge.css';
 
@@ -17,7 +18,6 @@ export function ChallengeArena() {
   const timeRemaining = useChallengeStore((s) => s.timeRemaining);
   const answers = useChallengeStore((s) => s.answers);
   const submitAnswer = useChallengeStore((s) => s.submitAnswer);
-  const nextProblem = useChallengeStore((s) => s.nextProblem);
   const tick = useChallengeStore((s) => s.tick);
   const uiLanguage = useUserStore((s) => s.profile.ui_language);
   const lang = uiLanguage;
@@ -27,7 +27,8 @@ export function ChallengeArena() {
   const problem = problems[currentIndex];
   const lastAnswer = answers.length > 0 ? answers[answers.length - 1] : null;
 
-  // Timer tick for timed mode
+  // Timer tick for timed mode (keeps running while reading explanations —
+  // reading costs time by design; skip ahead with Next/Enter).
   useEffect(() => {
     if (status !== 'playing' || config.mode !== 'timed') return;
     const interval = setInterval(() => {
@@ -36,16 +37,24 @@ export function ChallengeArena() {
     return () => clearInterval(interval);
   }, [status, config.mode, tick]);
 
-  // Auto-advance after feedback
+  // Manual advance only (issue #12): explanations need reading time, so the
+  // old 1.5s auto-advance was removed. Enter / Space / ArrowRight continue.
   useEffect(() => {
-    if (showingFeedback) {
-      const timer = setTimeout(() => {
-        nextProblem();
-        setSelected(null);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [showingFeedback, nextProblem]);
+    if (!showingFeedback) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.repeat) return;
+      if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'ArrowRight') return;
+      // Read fresh state: avoids stale-closure double-advance when the Next
+      // button is focused and Enter triggers both keydown and click.
+      const s = useChallengeStore.getState();
+      if (!s.showingFeedback || s.status !== 'playing') return;
+      e.preventDefault();
+      s.nextProblem();
+      setSelected(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showingFeedback]);
 
   const handleSelect = useCallback((option: string) => {
     if (showingFeedback || !problem) return;
@@ -53,9 +62,19 @@ export function ChallengeArena() {
     submitAnswer(problem.test.id, option);
   }, [showingFeedback, problem, submitAnswer]);
 
+  const handleNext = useCallback(() => {
+    const s = useChallengeStore.getState();
+    if (!s.showingFeedback || s.status !== 'playing') return;
+    s.nextProblem();
+    setSelected(null);
+  }, []);
+
   if (!problem) return null;
 
   const questionText = lang === 'zh' ? problem.test.question : (problem.test.question_en || problem.test.question);
+  const explanation = lang === 'en'
+    ? (problem.test.explanation_en || problem.test.explanation)
+    : problem.test.explanation;
 
   return (
     <div className="challenge-arena">
@@ -79,7 +98,11 @@ export function ChallengeArena() {
           <span className="arena-layer">{problem.concept.layer}</span>
         </div>
 
-        <h3 className="arena-question-text">{questionText}</h3>
+        <QuestionText
+          text={questionText}
+          fallbackLanguage={problem.test.language_context}
+          className="arena-question-text"
+        />
 
         <div className="arena-options" role="radiogroup" aria-label="Answer options">
           {problem.test.options.map((option) => {
@@ -117,6 +140,10 @@ export function ChallengeArena() {
                 <span>{t('feedback_answer_prefix', lang)}{problem.test.correct_answer}</span>
               </div>
             )}
+            <p className="feedback-explanation">
+              <span className="explanation-label">{t('explanation_label', lang)}</span>
+              {explanation}
+            </p>
             {problem.test.trap_note && (
               <p className="feedback-trap-note">{problem.test.trap_note}</p>
             )}
@@ -124,12 +151,12 @@ export function ChallengeArena() {
         )}
 
         {showingFeedback && (
-          <button className="btn-primary arena-next" onClick={() => {
-            nextProblem();
-            setSelected(null);
-          }}>
-            {t('challenge_next', lang)}
-          </button>
+          <div className="arena-next-row">
+            <button className="btn-primary arena-next" onClick={handleNext}>
+              {t('challenge_next', lang)}
+            </button>
+            <span className="arena-next-hint">{t('challenge_next_hint', lang)}</span>
+          </div>
         )}
       </div>
     </div>

@@ -269,3 +269,48 @@ body {
     padding: 16px;
   }
 }
+
+/* Shared explanation affordances (issue #12) */
+.explanation-label {
+  display: inline-block;
+  padding: 1px 8px;
+  margin-right: 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(122, 162, 247, 0.15);
+  color: var(--accent-blue);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+
+.question-text-part {
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+/* Themed scrollbars — Tokyo Night surfaces instead of browser default */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-tertiary) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 2px solid var(--bg-primary);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

@@ -77,6 +77,14 @@ export function ChallengeResult() {
                     <span className="review-correct-answer">{t('correct_answer', lang)}{problem?.test.correct_answer}</span>
                   </div>
                 )}
+                {problem && (
+                  <p className="review-explanation">
+                    <span className="explanation-label">{t('explanation_label', lang)}</span>
+                    {lang === 'en'
+                      ? (problem.test.explanation_en || problem.test.explanation)
+                      : problem.test.explanation}
+                  </p>
+                )}
               </div>
             );
           })}

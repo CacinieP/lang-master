@@ -71,6 +71,9 @@ export interface SemanticTest {
   language_context: AlphaLanguage;
   difficulty: Difficulty;
   trap_note?: string;
+  /** Why the correct answer is correct (zh). Required — every answer must be explainable. */
+  explanation: string;
+  explanation_en?: string;
   sandbox_required?: boolean;
 }
 

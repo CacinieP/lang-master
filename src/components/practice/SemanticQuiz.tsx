@@ -3,7 +3,8 @@ import type { ConceptNode } from '@/types';
 import { checkAnswer } from '@/services/semanticValidator';
 import { useProgressStore } from '@/store/progressStore';
 import { useUserStore } from '@/store/userStore';
-import { CodeBlock } from '../concept/CodeBlock';
+import { QuestionText } from '../common/QuestionText';
+import { t } from '@/utils/i18n';
 import './SemanticQuiz.css';
 
 interface Props {
@@ -78,16 +79,10 @@ export function SemanticQuiz({ concept }: Props) {
       </h4>
 
       <div className="quiz-question">
-        {(() => {
-          const question = uiLanguage === 'zh' ? test.question : (test.question_en || test.question);
-          return question.split('```').map((part, i) =>
-            i % 2 === 1 ? (
-              <CodeBlock key={i} code={part.trim()} language={test.language_context} />
-            ) : (
-              <p key={i} className="question-text">{part}</p>
-            ),
-          );
-        })()}
+        <QuestionText
+          text={uiLanguage === 'zh' ? test.question : (test.question_en || test.question)}
+          fallbackLanguage={test.language_context}
+        />
       </div>
 
       <div className="quiz-options">
@@ -111,6 +106,24 @@ export function SemanticQuiz({ concept }: Props) {
         ))}
       </div>
 
+      {showResult && selectedAnswer && (() => {
+        const result = checkAnswer(test, selectedAnswer, uiLanguage);
+        return (
+          <div className="quiz-feedback">
+            <div className={`quiz-result ${result.correct ? 'correct' : 'wrong'}`}>
+              {result.feedback}
+            </div>
+            <div className="quiz-explanation">
+              <span className="explanation-label">{t('explanation_label', uiLanguage)}</span>
+              {result.explanation}
+            </div>
+            {result.trap_note && (
+              <div className="quiz-trap-note">⚠ {result.trap_note}</div>
+            )}
+          </div>
+        );
+      })()}
+
       <div className="quiz-actions">
         {!showResult ? (
           <button
@@ -121,22 +134,11 @@ export function SemanticQuiz({ concept }: Props) {
             {uiLanguage === 'zh' ? '提交' : 'Submit'}
           </button>
         ) : (
-          <>
-            <div className={`quiz-result ${selectedAnswer === test.correct_answer ? 'correct' : 'wrong'}`}>
-              {selectedAnswer === test.correct_answer
-                ? (zh ? '正确！' : 'Correct!')
-                : (zh ? '不正确' : 'Incorrect')}
-            </div>
-            {currentTestIndex < tests.length - 1 ? (
-              <button className="btn-primary" onClick={handleNext}>
-                {zh ? '下一题' : 'Next'}
-              </button>
-            ) : (
-              <button className="btn-primary" onClick={handleNext}>
-                {zh ? '查看结果' : 'View Results'}
-              </button>
-            )}
-          </>
+          <button className="btn-primary" onClick={handleNext}>
+            {currentTestIndex < tests.length - 1
+              ? (zh ? '下一题' : 'Next')
+              : (zh ? '查看结果' : 'View Results')}
+          </button>
         )}
       </div>
     </div>

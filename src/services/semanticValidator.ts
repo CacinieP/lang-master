@@ -2,7 +2,12 @@ import type { SemanticTest } from '@/types';
 
 export interface ValidationResult {
   correct: boolean;
-  explanation?: string;
+  /** Localized right/wrong feedback, incl. the correct answer when wrong. */
+  feedback: string;
+  /** Localized "why the correct answer is correct" (issue #12). */
+  explanation: string;
+  /** Cross-language transfer note, when the question carries one. */
+  trap_note?: string;
 }
 
 export function checkAnswer(
@@ -12,22 +17,18 @@ export function checkAnswer(
 ): ValidationResult {
   const isCorrect = selectedAnswer === test.correct_answer;
 
-  let explanation: string;
+  let feedback: string;
   if (isCorrect) {
-    const prefix = lang === 'zh' ? '正确！' : 'Correct! ';
-    explanation = test.trap_note
-      ? `${prefix}${test.trap_note}`
-      : prefix;
+    feedback = lang === 'zh' ? '正确！' : 'Correct!';
   } else {
-    if (lang === 'zh') {
-      explanation = `正确答案是：${test.correct_answer}`;
-    } else {
-      explanation = `The correct answer is: ${test.correct_answer}`;
-    }
-    if (test.trap_note) {
-      explanation += `. ${test.trap_note}`;
-    }
+    feedback = lang === 'zh'
+      ? `正确答案是：${test.correct_answer}`
+      : `The correct answer is: ${test.correct_answer}`;
   }
 
-  return { correct: isCorrect, explanation };
+  const explanation = lang === 'en'
+    ? (test.explanation_en || test.explanation)
+    : test.explanation;
+
+  return { correct: isCorrect, feedback, explanation, trap_note: test.trap_note };
 }
