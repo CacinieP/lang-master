@@ -360,3 +360,61 @@ describe('challenge stats settlement (issue #18)', () => {
     expect(loadChallengeStats().bestScore).toBe(500);
   });
 });
+
+// Issue #28: settlement must only happen from a live run, and storage
+// failures must surface a localized toast like the other stores.
+describe('settlement hardening (issue #28)', () => {
+  beforeEach(() => {
+    reset();
+    useChallengeStore.setState({ stats: defaultChallengeStats(), isNewRecord: false });
+  });
+
+  it('ignores finishChallenge from idle (no empty-game settlement)', () => {
+    expect(useChallengeStore.getState().status).toBe('idle');
+    useChallengeStore.getState().finishChallenge();
+    const s = useChallengeStore.getState();
+    expect(s.status).toBe('idle');
+    expect(s.stats.gamesPlayed).toBe(0);
+    expect(s.stats.history).toEqual([]);
+    expect(localStorage.getItem('langmaster_challenge_stats')).toBeNull();
+  });
+
+  it('ignores finishChallenge after reset following a finished run', () => {
+    useChallengeStore.setState({
+      status: 'playing',
+      score: 100,
+      answers: [{ testId: 't', selected: 'x', correct: true, timeMs: 1, score: 100 }],
+    });
+    useChallengeStore.getState().finishChallenge();
+    expect(useChallengeStore.getState().stats.gamesPlayed).toBe(1);
+    useChallengeStore.getState().resetChallenge();
+    useChallengeStore.getState().finishChallenge(); // stale callback
+    expect(useChallengeStore.getState().stats.gamesPlayed).toBe(1);
+  });
+
+  it('surfaces a localized toast when stats cannot be saved', async () => {
+    const { useUIStore } = await import('./uiStore');
+    const { useUserStore } = await import('./userStore');
+    const { defaultProfile } = await import('@/types');
+    vi.stubGlobal('localStorage', {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error('QuotaExceededError');
+      },
+      removeItem: () => {},
+      clear: () => {},
+    });
+    useUserStore.setState({ profile: { ...defaultProfile(), ui_language: 'en' } });
+    useUIStore.setState({ toasts: [] });
+    useChallengeStore.setState({
+      status: 'playing',
+      score: 100,
+      answers: [{ testId: 't', selected: 'x', correct: true, timeMs: 1, score: 100 }],
+    });
+    useChallengeStore.getState().finishChallenge();
+    const toasts = useUIStore.getState().toasts;
+    expect(toasts).toHaveLength(1);
+    expect(toasts[0].text).toBe('Save failed — check browser storage');
+    expect(useChallengeStore.getState().status).toBe('finished');
+  });
+});
