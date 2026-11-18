@@ -21,6 +21,7 @@ interface ChallengeState {
   maxStreak: number;
   answers: Answer[];
   startedAt: number;
+  problemStartedAt: number;
   timeRemaining: number; // seconds
   status: ChallengeStatus;
   showingFeedback: boolean;
@@ -43,6 +44,7 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
   maxStreak: 0,
   answers: [],
   startedAt: 0,
+  problemStartedAt: 0,
   timeRemaining: 0,
   status: 'idle',
   showingFeedback: false,
@@ -62,6 +64,7 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
       maxStreak: 0,
       answers: [],
       startedAt: Date.now(),
+      problemStartedAt: Date.now(),
       timeRemaining: config.mode === 'timed' ? config.timeLimit : 0,
       status: 'playing',
       showingFeedback: false,
@@ -70,12 +73,15 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
 
   submitAnswer: (testId, selected) => {
     const state = get();
+    // Guard at the state layer: UI closures can race (fast double-click submits
+    // twice before re-render), and stale callbacks may fire after time expires.
+    if (state.status !== 'playing' || state.showingFeedback) return;
     const { problems, currentIndex, streak, maxStreak, score, config, timeRemaining, answers } = state;
     const problem = problems[currentIndex];
     if (!problem) return;
 
     const correct = selected === problem.test.correct_answer;
-    const timeMs = Date.now() - state.startedAt;
+    const timeMs = Date.now() - state.problemStartedAt;
     const newStreak = correct ? streak + 1 : 0;
     const newMaxStreak = Math.max(maxStreak, newStreak);
     const points = calculateScore(
@@ -97,12 +103,13 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
   },
 
   nextProblem: () => {
-    const { currentIndex, problems } = get();
+    const { currentIndex, problems, status } = get();
+    if (status !== 'playing') return;
     const nextIdx = currentIndex + 1;
     if (nextIdx >= problems.length) {
       get().finishChallenge();
     } else {
-      set({ currentIndex: nextIdx, showingFeedback: false });
+      set({ currentIndex: nextIdx, showingFeedback: false, problemStartedAt: Date.now() });
     }
   },
 
@@ -131,6 +138,7 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
       maxStreak: 0,
       answers: [],
       startedAt: 0,
+      problemStartedAt: 0,
       timeRemaining: 0,
       status: 'idle',
       showingFeedback: false,
