@@ -38,3 +38,32 @@ export interface SessionStats {
   concepts_attempted: ConceptAttempt[];
   trap_encounters: TrapEncounter[];
 }
+
+// One finished challenge run (issue #18)
+export interface ChallengeRunRecord {
+  score: number;
+  accuracy: number; // 0-100
+  correct: number;
+  total: number;
+  mode: 'timed' | 'count';
+  playedAt: number;
+}
+
+// Persisted challenge statistics (issue #18)
+export interface ChallengeStats {
+  bestScore: number;
+  gamesPlayed: number;
+  totalCorrect: number;
+  totalAnswered: number;
+  history: ChallengeRunRecord[]; // most recent first, capped at 10
+}
+
+export function defaultChallengeStats(): ChallengeStats {
+  return {
+    bestScore: 0,
+    gamesPlayed: 0,
+    totalCorrect: 0,
+    totalAnswered: 0,
+    history: [],
+  };
+}

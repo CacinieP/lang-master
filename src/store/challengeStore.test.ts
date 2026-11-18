@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChallengeStore } from './challengeStore';
 import { useProgressStore } from './progressStore';
 import { DEFAULT_CONFIG } from '@/services/challengeEngine';
-import { defaultConceptProgress } from '@/types';
+import { defaultConceptProgress, defaultChallengeStats } from '@/types';
+import { loadChallengeStats } from '@/services/storage';
 import type { Layer } from '@/types';
 
 function createLocalStorageMock() {
@@ -276,5 +277,84 @@ describe('challenge mastery integration (issue #17)', () => {
     expect(progress.getConceptStatus('literal_values')).toBe('mastered');
     expect([...progress.getMasteredConceptIds()]).toContain('literal_values');
     expect(progress.layerProgress.lexical).toBe(1);
+  });
+});
+
+// Issue #18: challenge results must persist (best score, history, records).
+describe('challenge stats settlement (issue #18)', () => {
+  beforeEach(() => {
+    reset();
+    useChallengeStore.setState({ stats: defaultChallengeStats(), isNewRecord: false });
+  });
+
+  function fakeRun(score: number, correct: number, total: number) {
+    const answers = Array.from({ length: total }, (_, i) => ({
+      testId: `t${i}`,
+      selected: 'x',
+      correct: i < correct,
+      timeMs: 100,
+      score: i < correct ? Math.round(score / Math.max(correct, 1)) : 0,
+    }));
+    useChallengeStore.setState({ status: 'playing', score, answers });
+    useChallengeStore.getState().finishChallenge();
+  }
+
+  it('first finished run persists stats and flags a new record', () => {
+    fakeRun(500, 5, 10);
+    const s = useChallengeStore.getState();
+    expect(s.status).toBe('finished');
+    expect(s.isNewRecord).toBe(true);
+    expect(s.stats.bestScore).toBe(500);
+    expect(s.stats.gamesPlayed).toBe(1);
+    expect(s.stats.totalCorrect).toBe(5);
+    expect(s.stats.totalAnswered).toBe(10);
+    expect(s.stats.history[0]).toMatchObject({ score: 500, accuracy: 50, correct: 5, total: 10 });
+    const persisted = JSON.parse(localStorage.getItem('langmaster_challenge_stats')!);
+    expect(persisted.bestScore).toBe(500);
+  });
+
+  it('finishChallenge is idempotent (no double settlement)', () => {
+    fakeRun(500, 5, 10);
+    useChallengeStore.getState().finishChallenge();
+    expect(useChallengeStore.getState().stats.gamesPlayed).toBe(1);
+  });
+
+  it('a lower second run keeps the record flag off; a higher run sets it', () => {
+    fakeRun(500, 5, 10);
+    useChallengeStore.getState().resetChallenge();
+    fakeRun(300, 3, 10);
+    expect(useChallengeStore.getState().isNewRecord).toBe(false);
+    expect(useChallengeStore.getState().stats.bestScore).toBe(500);
+    useChallengeStore.getState().resetChallenge();
+    fakeRun(900, 9, 10);
+    expect(useChallengeStore.getState().isNewRecord).toBe(true);
+    expect(useChallengeStore.getState().stats.bestScore).toBe(900);
+    expect(useChallengeStore.getState().stats.gamesPlayed).toBe(3);
+  });
+
+  it('a zero-score run is never a new record', () => {
+    fakeRun(0, 0, 5);
+    expect(useChallengeStore.getState().isNewRecord).toBe(false);
+    expect(useChallengeStore.getState().stats.gamesPlayed).toBe(1);
+  });
+
+  it('history keeps the 10 most recent runs, newest first', () => {
+    for (let i = 1; i <= 12; i++) {
+      useChallengeStore.getState().resetChallenge();
+      fakeRun(i * 100, 1, 2);
+    }
+    const { history } = useChallengeStore.getState().stats;
+    expect(history).toHaveLength(10);
+    expect(history[0].score).toBe(1200);
+    expect(history[9].score).toBe(300);
+  });
+
+  it('resetChallenge keeps persisted stats but clears the record flag', () => {
+    fakeRun(500, 5, 10);
+    useChallengeStore.getState().resetChallenge();
+    const s = useChallengeStore.getState();
+    expect(s.isNewRecord).toBe(false);
+    expect(s.stats.bestScore).toBe(500);
+    expect(loadChallengeStats().bestScore).toBe(500);
   });
 });

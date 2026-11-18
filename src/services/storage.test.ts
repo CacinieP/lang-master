@@ -4,9 +4,11 @@ import {
   saveProfile,
   loadProgress,
   saveProgress,
+  loadChallengeStats,
+  saveChallengeStats,
   clearAllData,
 } from './storage';
-import { defaultProfile, defaultConceptProgress } from '@/types';
+import { defaultProfile, defaultConceptProgress, defaultChallengeStats } from '@/types';
 
 // Minimal localStorage mock — keeps the suite in node env (no jsdom dependency).
 function createLocalStorageMock() {
@@ -100,5 +102,47 @@ describe('clearAllData', () => {
     expect(localStorage.getItem('langmaster_profile')).toBeNull();
     expect(localStorage.getItem('langmaster_progress')).toBeNull();
     expect(localStorage.getItem('lm_ui_state')).toBeNull();
+  });
+});
+
+describe('challenge stats persistence (issue #18)', () => {
+  it('returns defaults when nothing is stored', () => {
+    expect(loadChallengeStats()).toEqual(defaultChallengeStats());
+  });
+
+  it('round-trips saved stats', () => {
+    const stats = {
+      ...defaultChallengeStats(),
+      bestScore: 950,
+      gamesPlayed: 3,
+      totalCorrect: 20,
+      totalAnswered: 30,
+      history: [{ score: 950, accuracy: 80, correct: 8, total: 10, mode: 'count' as const, playedAt: 123 }],
+    };
+    expect(saveChallengeStats(stats)).toBe(true);
+    expect(loadChallengeStats()).toEqual(stats);
+  });
+
+  it('falls back to defaults on corrupted JSON', () => {
+    localStorage.setItem('langmaster_challenge_stats', '{oops');
+    expect(loadChallengeStats()).toEqual(defaultChallengeStats());
+  });
+
+  it('caps loaded history at 10 and tolerates a missing history field', () => {
+    const long = Array.from({ length: 15 }, (_, i) => ({
+      score: i, accuracy: 0, correct: 0, total: 0, mode: 'count' as const, playedAt: i,
+    }));
+    localStorage.setItem('langmaster_challenge_stats', JSON.stringify({ bestScore: 5, history: long }));
+    const loaded = loadChallengeStats();
+    expect(loaded.history).toHaveLength(10);
+    expect(loaded.gamesPlayed).toBe(0);
+    localStorage.setItem('langmaster_challenge_stats', JSON.stringify({ bestScore: 5 }));
+    expect(loadChallengeStats().history).toEqual([]);
+  });
+
+  it('clearAllData removes challenge stats too', () => {
+    saveChallengeStats({ ...defaultChallengeStats(), bestScore: 100 });
+    clearAllData();
+    expect(localStorage.getItem('langmaster_challenge_stats')).toBeNull();
   });
 });

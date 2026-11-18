@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import type { ChallengeConfig, ChallengeProblem } from '@/services/challengeEngine';
 import { DEFAULT_CONFIG, assembleProblems, calculateScore } from '@/services/challengeEngine';
+import { loadChallengeStats, saveChallengeStats } from '@/services/storage';
+import type { ChallengeStats } from '@/types';
 import { useProgressStore } from './progressStore';
 
 export type ChallengeStatus = 'idle' | 'playing' | 'finished';
@@ -26,6 +28,8 @@ interface ChallengeState {
   timeRemaining: number; // seconds
   status: ChallengeStatus;
   showingFeedback: boolean;
+  stats: ChallengeStats;
+  isNewRecord: boolean;
 
   setConfig: (config: Partial<ChallengeConfig>) => void;
   startChallenge: () => void;
@@ -49,6 +53,8 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
   timeRemaining: 0,
   status: 'idle',
   showingFeedback: false,
+  stats: loadChallengeStats(),
+  isNewRecord: false,
 
   setConfig: (partial) =>
     set((s) => ({ config: { ...s.config, ...partial } })),
@@ -69,6 +75,7 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
       timeRemaining: config.mode === 'timed' ? config.timeLimit : 0,
       status: 'playing',
       showingFeedback: false,
+      isNewRecord: false,
     });
   },
 
@@ -129,7 +136,25 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
   },
 
   finishChallenge: () => {
-    set({ status: 'finished' });
+    const state = get();
+    if (state.status === 'finished') return; // idempotent: no double settlement
+    const { answers, score, config, stats } = state;
+    const total = answers.length;
+    const correct = answers.filter((a) => a.correct).length;
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+    const isNewRecord = score > stats.bestScore && score > 0;
+    const nextStats: ChallengeStats = {
+      bestScore: Math.max(stats.bestScore, score),
+      gamesPlayed: stats.gamesPlayed + 1,
+      totalCorrect: stats.totalCorrect + correct,
+      totalAnswered: stats.totalAnswered + total,
+      history: [
+        { score, accuracy, correct, total, mode: config.mode, playedAt: Date.now() },
+        ...stats.history,
+      ].slice(0, 10),
+    };
+    saveChallengeStats(nextStats);
+    set({ status: 'finished', stats: nextStats, isNewRecord });
   },
 
   resetChallenge: () => {
@@ -145,6 +170,7 @@ export const useChallengeStore = create<ChallengeState>((set, get) => ({
       timeRemaining: 0,
       status: 'idle',
       showingFeedback: false,
+      isNewRecord: false,
     });
   },
 }));
